@@ -1033,6 +1033,8 @@
     const label = document.getElementById('themeLabel');
     if (label) label.textContent = dark ? '🌙 Dark' : '☀️ Light';
   });
+  // Debug: verify button exists
+  console.log('Theme toggle button found:', !!themeToggle);
 
   // ── Chip toggle ──
   document.querySelectorAll('.chip-group').forEach(group => {
