@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+venv/
+.env
+
+# Data / Logs
+*.csv
+*.log
+*.txt
+
+# Windows
+*.reg
+*.ps1
+*~
+Thumbs.db
+
+# Backups
+_backup_*/
+_startup_backup/
+startup_backup_*
+
+# Node
+node_modules/
+dist/
+build/
+
+# Misc
+.idea/
+.vscode/
+.DS_Store
