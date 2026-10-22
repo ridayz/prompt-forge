@@ -969,38 +969,35 @@
 
 <script>
   // ── Theme Toggle ──
-  (function() {
-    const toggle = document.getElementById('themeToggle');
-    if (!toggle) {
-      console.error('Theme toggle button not found!');
-      return;
-    }
-    
-    // Check saved theme
-    let isDark = false;
-    try {
-      const saved = localStorage.getItem('promptforge-theme');
-      if (saved === 'dark') isDark = true;
-      else if (saved === 'light') isDark = false;
-      else isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    } catch(e) {
-      isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    }
-    
-    // Apply theme immediately
-    if (isDark) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-    }
-    
-    // Toggle handler
-    toggle.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      
+  const themeToggle = document.getElementById('themeToggle');
+  
+  // Check saved theme
+  let isDark = false;
+  try {
+    const saved = localStorage.getItem('promptforge-theme');
+    if (saved === 'dark') isDark = true;
+    else if (saved === 'light') isDark = false;
+    else isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  } catch(e) {
+    isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  }
+  
+  // Apply theme immediately
+  if (isDark) {
+    document.documentElement.setAttribute('data-theme', 'dark');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
+  
+  console.log('Theme toggle initialized, isDark:', isDark);
+  
+  if (themeToggle) {
+    themeToggle.addEventListener('click', function() {
+      console.log('Button clicked!');
       const current = document.documentElement.getAttribute('data-theme');
       const willBeDark = current !== 'dark';
+      
+      console.log('Current theme:', current, 'Will be dark:', willBeDark);
       
       if (willBeDark) {
         document.documentElement.setAttribute('data-theme', 'dark');
@@ -1014,9 +1011,9 @@
       
       console.log('Theme toggled to:', willBeDark ? 'dark' : 'light');
     });
-    
-    console.log('Theme toggle initialized, isDark:', isDark);
-  })();
+  } else {
+    console.error('Theme toggle button NOT FOUND!');
+  }
 
   // ── Chip toggle ──
   document.querySelectorAll('.chip-group').forEach(group => {
