@@ -759,7 +759,7 @@
 </head>
 <body>
 
-  <button id="themeToggle" style="position:fixed;top:20px;right:20px;z-index:9999;width:60px;height:60px;background:#fff;border:2px solid #e8e4df;border-radius:16px;cursor:pointer;font-size:1.5rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.1);" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'':'dark');alert('Clicked!');">☀️</button>
+  <button id="themeToggle" style="position:fixed;top:20px;right:20px;z-index:9999;width:60px;height:60px;background:#fff;border:2px solid #e8e4df;border-radius:16px;cursor:pointer;font-size:1.5rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.1);" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'':'dark');alert('Clicked! Dark mode:', document.documentElement.getAttribute('data-theme')==='dark');">☀️</button>
 
   <!-- Background blobs -->
   <div class="bg-blob blob-1"></div>
@@ -964,36 +964,8 @@
   </div><!-- /layout -->
 
 <script>
-  // ── Theme Toggle ──
-  const themeToggle = document.getElementById('themeToggle');
-  console.log('Button element:', themeToggle);
-  
-  if (themeToggle) {
-    themeToggle.addEventListener('click', function(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      console.log('CLICK FIRED!');
-      alert('CLICKED! Current: ' + document.documentElement.getAttribute('data-theme'));
-      
-      const current = document.documentElement.getAttribute('data-theme');
-      const willBeDark = current !== 'dark';
-      
-      if (willBeDark) {
-        document.documentElement.setAttribute('data-theme', 'dark');
-        themeToggle.textContent = '🌙';
-      } else {
-        document.documentElement.removeAttribute('data-theme');
-        themeToggle.textContent = '☀️';
-      }
-      
-      try {
-        localStorage.setItem('promptforge-theme', willBeDark ? 'dark' : 'light');
-      } catch(e) {}
-    });
-    console.log('Event listener attached');
-  } else {
-    console.error('BUTTON NOT FOUND!');
-  }
+  // Theme toggle is handled by inline onclick on the button
+  console.log('Page loaded');
 
   // ── Chip toggle ──
   document.querySelectorAll('.chip-group').forEach(group => {
