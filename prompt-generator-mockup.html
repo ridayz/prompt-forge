@@ -993,11 +993,10 @@
   
   if (themeToggle) {
     themeToggle.addEventListener('click', function() {
-      console.log('Button clicked!');
+      alert('Button clicked! Current theme: ' + document.documentElement.getAttribute('data-theme'));
+      
       const current = document.documentElement.getAttribute('data-theme');
       const willBeDark = current !== 'dark';
-      
-      console.log('Current theme:', current, 'Will be dark:', willBeDark);
       
       if (willBeDark) {
         document.documentElement.setAttribute('data-theme', 'dark');
