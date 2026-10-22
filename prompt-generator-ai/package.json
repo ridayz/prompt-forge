@@ -1,0 +1,22 @@
+{
+  "name": "prompt-generator-ai",
+  "version": "1.0.0",
+  "description": "Transform human language into precise, structured AI prompts",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx serve .",
+    "dev": "npx serve . --listen 3000"
+  },
+  "keywords": [
+    "prompt",
+    "generator",
+    "ai",
+    "chatgpt",
+    "llm"
+  ],
+  "author": "ridayz",
+  "license": "MIT",
+  "dependencies": {
+    "serve": "^14.2.0"
+  }
+}

@@ -1,0 +1,2301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NetWatch - Network Monitoring</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --bg-hover: #f1f5f9;
+            --border-color: #e2e8f0;
+            --text-primary: #334155;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --accent-blue: #60a5fa;
+            --accent-blue-light: #dbeafe;
+            --accent-blue-dark: #2563eb;
+            --accent-cyan: #22d3ee;
+            --accent-cyan-light: #ecfeff;
+            --accent-green: #34d399;
+            --accent-green-light: #d1fae5;
+            --accent-yellow: #fbbf24;
+            --accent-yellow-light: #fef3c7;
+            --accent-red: #f87171;
+            --accent-red-light: #fee2e2;
+            --accent-purple: #a78bfa;
+            --accent-purple-light: #ede9fe;
+            --accent-pink: #f472b6;
+            --accent-pink-light: #fce7f3;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--bg-secondary);
+            border-right: 1px solid var(--border-color);
+            padding: 24px 16px;
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0 12px 28px;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 24px;
+        }
+
+        .brand-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .brand-text {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .brand-text span {
+            color: var(--accent-blue);
+        }
+
+        .nav-menu {
+            list-style: none;
+            flex: 1;
+        }
+
+        .nav-item {
+            margin-bottom: 6px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 14px 18px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 12px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            transform: translateX(4px);
+        }
+
+        .nav-link.active {
+            background: linear-gradient(135deg, var(--accent-blue-light), var(--accent-purple-light));
+            color: var(--accent-blue);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .nav-link:active {
+            transform: scale(0.96);
+        }
+
+        .nav-link i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .nav-badge {
+            margin-left: auto;
+            background: var(--accent-red-light);
+            color: var(--accent-red);
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .nav-section {
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            padding: 20px 12px 10px;
+            letter-spacing: 0.8px;
+        }
+
+        .sidebar-footer {
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            margin-top: auto;
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: 280px;
+            padding: 28px 36px;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+            padding-bottom: 24px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .page-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .page-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, var(--accent-blue-light), var(--accent-cyan-light));
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+            color: var(--accent-blue);
+        }
+
+        .page-title {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .page-subtitle {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            width: 300px;
+            padding: 12px 18px 12px 44px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.25s;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 0 4px var(--accent-blue-light);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
+        }
+
+        .btn:active {
+            transform: scale(0.95);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .btn-primary:hover {
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            color: var(--text-primary);
+            border-color: var(--accent-blue);
+        }
+
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 14px;
+            background: var(--bg-secondary);
+            border-radius: 14px;
+            cursor: pointer;
+            border: 2px solid var(--border-color);
+            transition: all 0.25s;
+        }
+
+        .user-menu:hover {
+            border-color: var(--accent-blue);
+        }
+
+        .user-menu:active {
+            transform: scale(0.95);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 15px;
+            color: white;
+        }
+
+        .user-info {
+            font-size: 14px;
+        }
+
+        .user-name {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .user-role {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* KPI Grid */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .stat-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 26px;
+            border: 2px solid var(--border-color);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-6px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--accent-blue);
+        }
+
+        .stat-card:hover::before {
+            opacity: 1;
+        }
+
+        .stat-card:active {
+            transform: scale(0.98);
+        }
+
+        .stat-card.blue { --card-accent: var(--accent-blue-light); }
+        .stat-card.green { --card-accent: var(--accent-green-light); }
+        .stat-card.yellow { --card-accent: var(--accent-yellow-light); }
+        .stat-card.red { --card-accent: var(--accent-red-light); }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 18px;
+        }
+
+        .stat-icon {
+            width: 54px;
+            height: 54px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .stat-icon.blue { background: var(--accent-blue-light); color: var(--accent-blue); }
+        .stat-icon.green { background: var(--accent-green-light); color: var(--accent-green); }
+        .stat-icon.yellow { background: var(--accent-yellow-light); color: var(--accent-yellow); }
+        .stat-icon.red { background: var(--accent-red-light); color: var(--accent-red); }
+
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .stat-trend.up {
+            background: var(--accent-green-light);
+            color: var(--accent-green);
+        }
+
+        .stat-trend.down {
+            background: var(--accent-red-light);
+            color: var(--accent-red);
+        }
+
+        .stat-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--text-primary);
+            line-height: 1;
+            margin-bottom: 6px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Traffic Grid */
+        .traffic-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .traffic-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            padding: 24px;
+            transition: all 0.3s;
+        }
+
+        .traffic-card:hover {
+            border-color: var(--accent-blue);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-4px);
+        }
+
+        .traffic-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+        }
+
+        .traffic-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .traffic-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+
+        .traffic-chart {
+            height: 100px;
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+        }
+
+        .traffic-bar {
+            flex: 1;
+            border-radius: 6px 6px 0 0;
+            min-height: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .traffic-bar:hover {
+            opacity: 0.8;
+            transform: scaleY(1.05);
+        }
+
+        .traffic-bar.inbound {
+            background: linear-gradient(180deg, var(--accent-blue), #3b82f6);
+        }
+
+        .traffic-bar.outbound {
+            background: linear-gradient(180deg, var(--accent-cyan), #06b6d4);
+        }
+
+        .traffic-legend {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .traffic-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .traffic-legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 3px;
+        }
+
+        /* Topology */
+        .topology-container {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            margin-bottom: 28px;
+            overflow: hidden;
+        }
+
+        .topology-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 26px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .topology-title {
+            font-size: 17px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .topology-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .topology-btn {
+            padding: 8px 16px;
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.25s;
+        }
+
+        .topology-btn:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .topology-btn:active {
+            transform: scale(0.95);
+        }
+
+        .topology-btn.active {
+            background: var(--accent-blue-light);
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .topology-wrapper {
+            height: 550px;
+            overflow: auto;
+            position: relative;
+            background: linear-gradient(180deg, #fafbfc 0%, #f0f4f8 100%);
+        }
+
+        .topology-wrapper::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+
+        .topology-wrapper::-webkit-scrollbar-track {
+            background: var(--bg-hover);
+            border-radius: 6px;
+        }
+
+        .topology-wrapper::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 6px;
+        }
+
+        .topology-wrapper::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-pink));
+        }
+
+        .topology-canvas {
+            min-width: 1300px;
+            min-height: 800px;
+            position: relative;
+            padding: 50px;
+        }
+
+        .topology-grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle, var(--accent-blue) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.15;
+            top: 0;
+            left: 0;
+        }
+
+        /* Animated Connection Lines */
+        .topology-connections {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .connection-group {
+            position: absolute;
+        }
+
+        .connection-line {
+            position: absolute;
+            height: 4px;
+            border-radius: 4px;
+            transform-origin: left center;
+            overflow: hidden;
+        }
+
+        .connection-line::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.8), transparent);
+            animation: dataFlow 2s ease-in-out infinite;
+        }
+
+        .connection-line.active {
+            background: linear-gradient(90deg, var(--accent-green), var(--accent-cyan));
+            box-shadow: 0 0 10px var(--accent-green);
+        }
+
+        .connection-line.active::before {
+            animation-delay: 0s;
+        }
+
+        .connection-line.warning {
+            background: linear-gradient(90deg, var(--accent-yellow), var(--accent-red));
+            box-shadow: 0 0 10px var(--accent-yellow);
+        }
+
+        .connection-line.warning::before {
+            animation-delay: 0.5s;
+        }
+
+        .connection-line.down {
+            background: linear-gradient(90deg, var(--accent-red), #991b1b);
+            opacity: 0.5;
+        }
+
+        .connection-line.down::before {
+            animation: none;
+        }
+
+        @keyframes dataFlow {
+            0% { left: -100%; }
+            100% { left: 200%; }
+        }
+
+        /* Animated Packets */
+        .packet {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 0 15px 3px var(--accent-cyan);
+            z-index: 6;
+            animation: packetMove 3s linear infinite;
+        }
+
+        @keyframes packetMove {
+            0% { 
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% { 
+                transform: translate(var(--tx), var(--ty)) scale(0.5);
+                opacity: 0;
+            }
+        }
+
+        /* Device Nodes */
+        .topology-node {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 10;
+        }
+
+        .topology-node:hover {
+            transform: scale(1.1);
+            z-index: 30;
+        }
+
+        .topology-node:active {
+            transform: scale(1.05);
+        }
+
+        .node-device {
+            width: 80px;
+            height: 80px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            position: relative;
+            box-shadow: var(--shadow-lg);
+            transition: all 0.3s;
+            overflow: hidden;
+        }
+
+        .topology-node:hover .node-device {
+            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.2);
+        }
+
+        .node-device::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent 30%,
+                rgba(255,255,255,0.3) 50%,
+                transparent 70%
+            );
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) rotate(45deg); }
+        }
+
+        .node-device.router {
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 50%, #93c5fd 100%);
+            border: 3px solid var(--accent-blue);
+            color: var(--accent-blue-dark);
+        }
+
+        .node-device.firewall {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 50%, #fca5a5 100%);
+            border: 3px solid var(--accent-red);
+            color: #991b1b;
+        }
+
+        .node-device.switch {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 50%, #6ee7b7 100%);
+            border: 3px solid var(--accent-green);
+            color: #047857;
+        }
+
+        .node-device.server {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+            border: 3px solid var(--accent-yellow);
+            color: #92400e;
+        }
+
+        .node-device.ap {
+            background: linear-gradient(135deg, #ede9fe 0%, #ddd6fe 50%, #c4b5fd 100%);
+            border: 3px solid var(--accent-purple);
+            color: #6d28d9;
+        }
+
+        .node-device.cloud {
+            background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e1 50%, #94a3b8 100%);
+            border: 3px solid var(--text-muted);
+            color: #475569;
+        }
+
+        .node-device .icon-wrapper {
+            position: relative;
+            z-index: 2;
+            animation: iconFloat 3s ease-in-out infinite;
+        }
+
+        @keyframes iconFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        .node-status {
+            position: absolute;
+            bottom: -8px;
+            right: -8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: var(--shadow-md);
+            z-index: 5;
+        }
+
+        .node-status.online { 
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-green-light));
+            animation: statusPulse 2s infinite;
+        }
+
+        .node-status.warning { 
+            background: linear-gradient(135deg, var(--accent-yellow), var(--accent-yellow-light));
+            animation: statusPulse 1s infinite;
+        }
+
+        .node-status.offline { 
+            background: linear-gradient(135deg, var(--accent-red), var(--accent-red-light));
+        }
+
+        @keyframes statusPulse {
+            0%, 100% { 
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.4);
+            }
+            50% { 
+                transform: scale(1.1);
+                box-shadow: 0 0 0 6px rgba(52, 211, 153, 0);
+            }
+        }
+
+        .node-label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-primary);
+            background: var(--bg-secondary);
+            padding: 8px 16px;
+            border-radius: 10px;
+            white-space: nowrap;
+            border: 2px solid var(--border-color);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s;
+        }
+
+        .topology-node:hover .node-label {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            border-color: var(--accent-blue);
+            box-shadow: 0 5px 15px rgba(96, 165, 250, 0.4);
+        }
+
+        /* Topology Info */
+        .topology-info {
+            padding: 18px 26px;
+            background: var(--bg-secondary);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .topology-stats {
+            display: flex;
+            gap: 28px;
+        }
+
+        .topology-stat {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .topology-stat-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+
+        .bandwidth-display {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .bandwidth-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .bandwidth-value {
+            font-weight: 700;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+
+        /* Grid Layouts */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 24px;
+            margin-bottom: 28px;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            border: 2px solid var(--border-color);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 26px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title i {
+            color: var(--accent-blue);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .card-body {
+            padding: 24px 26px;
+        }
+
+        /* Chart */
+        .chart-container {
+            height: 280px;
+            position: relative;
+        }
+
+        .chart-bars {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 220px;
+            padding: 0 10px;
+            gap: 10px;
+        }
+
+        .chart-bar-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-bar {
+            width: 100%;
+            max-width: 45px;
+            background: linear-gradient(180deg, var(--accent-blue) 0%, var(--accent-cyan) 100%);
+            border-radius: 8px 8px 0 0;
+            min-height: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .chart-bar:hover {
+            opacity: 0.85;
+            transform: scaleY(1.03);
+        }
+
+        .chart-bar:hover::after {
+            content: attr(data-value);
+            position: absolute;
+            top: -35px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .chart-label {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 28px;
+            margin-top: 20px;
+            padding-top: 18px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 4px;
+        }
+
+        /* Device List */
+        .device-list {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .device-row {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 18px;
+            background: var(--bg-primary);
+            border-radius: 12px;
+            transition: all 0.25s;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+
+        .device-row:hover {
+            background: var(--bg-hover);
+            border-color: var(--accent-blue);
+            transform: translateX(4px);
+        }
+
+        .device-row:active {
+            transform: scale(0.98);
+        }
+
+        .device-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .device-icon.router { background: var(--accent-blue-light); color: var(--accent-blue); }
+        .device-icon.switch { background: var(--accent-green-light); color: var(--accent-green); }
+        .device-icon.server { background: var(--accent-yellow-light); color: var(--accent-yellow); }
+        .device-icon.firewall { background: var(--accent-red-light); color: var(--accent-red); }
+        .device-icon.ap { background: var(--accent-purple-light); color: var(--accent-purple); }
+
+        .device-details {
+            flex: 1;
+        }
+
+        .device-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 15px;
+            margin-bottom: 3px;
+        }
+
+        .device-meta {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.online {
+            background: var(--accent-green-light);
+            color: var(--accent-green);
+        }
+
+        .status-badge.warning {
+            background: var(--accent-yellow-light);
+            color: var(--accent-yellow);
+        }
+
+        .status-badge.offline {
+            background: var(--accent-red-light);
+            color: var(--accent-red);
+        }
+
+        .status-badge.degraded {
+            background: var(--accent-blue-light);
+            color: var(--accent-blue);
+        }
+
+        /* Alerts */
+        .alerts-list {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .alert-row {
+            display: flex;
+            gap: 16px;
+            padding: 18px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            background: var(--bg-primary);
+            border-left: 4px solid;
+            transition: all 0.25s;
+            cursor: pointer;
+        }
+
+        .alert-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .alert-row:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .alert-row:active {
+            transform: scale(0.98);
+        }
+
+        .alert-row.critical { border-left-color: var(--accent-red); background: var(--accent-red-light); }
+        .alert-row.major { border-left-color: var(--accent-yellow); background: var(--accent-yellow-light); }
+        .alert-row.minor { border-left-color: var(--accent-blue); background: var(--accent-blue-light); }
+        .alert-row.info { border-left-color: var(--accent-purple); background: var(--accent-purple-light); }
+
+        .alert-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 18px;
+        }
+
+        .alert-row.critical .alert-icon { background: white; color: var(--accent-red); }
+        .alert-row.major .alert-icon { background: white; color: var(--accent-yellow); }
+        .alert-row.minor .alert-icon { background: white; color: var(--accent-blue); }
+        .alert-row.info .alert-icon { background: white; color: var(--accent-purple); }
+
+        .alert-content {
+            flex: 1;
+        }
+
+        .alert-title {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 15px;
+            margin-bottom: 5px;
+        }
+
+        .alert-desc {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+        }
+
+        .alert-meta {
+            display: flex;
+            gap: 18px;
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
+            background: var(--bg-secondary);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .action-btn:hover {
+            background: var(--accent-blue);
+            color: white;
+            transform: scale(1.1);
+        }
+
+        .action-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+        }
+
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th {
+            padding: 16px 18px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--text-muted);
+            border-bottom: 2px solid var(--border-color);
+            background: var(--bg-primary);
+        }
+
+        .data-table th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .data-table th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .data-table td {
+            padding: 18px;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .data-table tbody tr {
+            transition: all 0.25s;
+            cursor: pointer;
+        }
+
+        .data-table tbody tr:hover {
+            background: var(--bg-hover);
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .metric-bar {
+            width: 100px;
+            height: 8px;
+            background: var(--bg-primary);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .metric-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        .metric-fill.low { background: linear-gradient(90deg, var(--accent-green), #6ee7b7); }
+        .metric-fill.medium { background: linear-gradient(90deg, var(--accent-yellow), #fcd34d); }
+        .metric-fill.high { background: linear-gradient(90deg, var(--accent-red), #fca5a5); }
+
+        .device-type {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 12px;
+            background: var(--bg-primary);
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+
+        /* Pages */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Fullscreen Topology */
+        .topology-fullscreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            background: var(--bg-primary);
+        }
+
+        .topology-fullscreen .topology-wrapper {
+            height: calc(100vh - 140px);
+        }
+
+        .topology-fullscreen .topology-canvas {
+            min-height: 900px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1400px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .traffic-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .sidebar {
+                transform: translateX(-100%);
+                transition: transform 0.3s;
+            }
+            .main-content {
+                margin-left: 0;
+            }
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="brand">
+            <div class="brand-icon">
+                <i class="fas fa-network-wired"></i>
+            </div>
+            <div class="brand-text">Net<span>Watch</span></div>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <button class="nav-link active" data-page="dashboard">
+                    <i class="fas fa-th-large"></i>
+                    <span>Dashboard</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="devices">
+                    <i class="fas fa-server"></i>
+                    <span>Devices</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="topology">
+                    <i class="fas fa-project-diagram"></i>
+                    <span>Topology</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Analytics</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="alerts">
+                    <i class="fas fa-bell"></i>
+                    <span>Alerts</span>
+                    <span class="nav-badge">7</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="reports">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Reports</span>
+                </button>
+            </li>
+            
+            <div class="nav-section">Management</div>
+            
+            <li class="nav-item">
+                <button class="nav-link" data-page="settings">
+                    <i class="fas fa-cog"></i>
+                    <span>Settings</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="users">
+                    <i class="fas fa-users"></i>
+                    <span>Users</span>
+                </button>
+            </li>
+            <li class="nav-item">
+                <button class="nav-link" data-page="security">
+                    <i class="fas fa-shield-alt"></i>
+                    <span>Security</span>
+                </button>
+            </li>
+        </ul>
+
+        <div class="sidebar-footer">
+            <button class="nav-link" onclick="alert('Logout clicked')">
+                <i class="fas fa-sign-out-alt"></i>
+                <span>Logout</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Top Bar -->
+        <div class="top-bar">
+            <div class="page-header">
+                <div class="page-icon" id="pageIcon">
+                    <i class="fas fa-th-large"></i>
+                </div>
+                <div>
+                    <h1 class="page-title" id="pageTitle">Dashboard</h1>
+                    <p class="page-subtitle" id="pageSubtitle">Real-time monitoring and analytics</p>
+                </div>
+            </div>
+            <div class="top-actions">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search devices, IPs...">
+                </div>
+                <button class="btn btn-secondary">
+                    <i class="fas fa-download"></i>
+                    Export
+                </button>
+                <button class="btn btn-primary" onclick="refreshData()">
+                    <i class="fas fa-sync-alt"></i>
+                    Refresh
+                </button>
+                <div class="user-menu">
+                    <div class="avatar">AD</div>
+                    <div class="user-info">
+                        <div class="user-name">Admin</div>
+                        <div class="user-role">Network Admin</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div class="page active" id="page-dashboard">
+            <!-- KPI Stats -->
+            <div class="kpi-grid">
+                <div class="stat-card blue" onclick="showToast('Total Devices clicked')">
+                    <div class="stat-header">
+                        <div class="stat-icon blue">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div class="stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            12%
+                        </div>
+                    </div>
+                    <div class="stat-value">48</div>
+                    <div class="stat-label">Total Devices</div>
+                </div>
+                
+                <div class="stat-card green" onclick="showToast('Uptime Rate clicked')">
+                    <div class="stat-header">
+                        <div class="stat-icon green">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            2.4%
+                        </div>
+                    </div>
+                    <div class="stat-value">93.8%</div>
+                    <div class="stat-label">Uptime Rate</div>
+                </div>
+                
+                <div class="stat-card yellow" onclick="showToast('Current Traffic clicked')">
+                    <div class="stat-header">
+                        <div class="stat-icon yellow">
+                            <i class="fas fa-chart-area"></i>
+                        </div>
+                        <div class="stat-trend up">
+                            <i class="fas fa-arrow-up"></i>
+                            8.2%
+                        </div>
+                    </div>
+                    <div class="stat-value">2.4 Gbps</div>
+                    <div class="stat-label">Current Traffic</div>
+                </div>
+                
+                <div class="stat-card red" onclick="showToast('Active Alerts clicked')">
+                    <div class="stat-header">
+                        <div class="stat-icon red">
+                            <i class="fas fa-bell"></i>
+                        </div>
+                        <div class="stat-trend down">
+                            <i class="fas fa-arrow-up"></i>
+                            3 new
+                        </div>
+                    </div>
+                    <div class="stat-value">7</div>
+                    <div class="stat-label">Active Alerts</div>
+                </div>
+            </div>
+
+            <!-- Traffic Overview -->
+            <div class="traffic-grid">
+                <div class="traffic-card">
+                    <div class="traffic-header">
+                        <div class="traffic-title">
+                            <i class="fas fa-arrow-down" style="color: var(--accent-blue);"></i>
+                            Inbound Traffic
+                        </div>
+                    </div>
+                    <div class="traffic-value">1.32 Gbps</div>
+                    <div class="traffic-chart">
+                        <div class="traffic-bar inbound" style="height: 45%;" onclick="showToast('Inbound: 1.2 Gbps')"></div>
+                        <div class="traffic-bar inbound" style="height: 52%;" onclick="showToast('Inbound: 1.4 Gbps')"></div>
+                        <div class="traffic-bar inbound" style="height: 38%;" onclick="showToast('Inbound: 1.0 Gbps')"></div>
+                        <div class="traffic-bar inbound" style="height: 62%;" onclick="showToast('Inbound: 1.6 Gbps')"></div>
+                        <div class="traffic-bar inbound" style="height: 75%;" onclick="showToast('Inbound: 2.0 Gbps')"></div>
+                        <div class="traffic-bar inbound" style="height: 68%;" onclick="showToast('Inbound: 1.8 Gbps')"></div>
+                        <div class="traffic-bar inbound" style="height: 82%;" onclick="showToast('Inbound: 2.2 Gbps')"></div>
+                        <div class="traffic-bar inbound" style="height: 55%;" onclick="showToast('Inbound: 1.5 Gbps')"></div>
+                        <div class="traffic-bar inbound" style="height: 48%;" onclick="showToast('Inbound: 1.3 Gbps')"></div>
+                        <div class="traffic-bar inbound" style="height: 72%;" onclick="showToast('Inbound: 1.9 Gbps')"></div>
+                        <div class="traffic-bar inbound" style="height: 65%;" onclick="showToast('Inbound: 1.7 Gbps')"></div>
+                        <div class="traffic-bar inbound" style="height: 58%;" onclick="showToast('Inbound: 1.5 Gbps')"></div>
+                    </div>
+                    <div class="traffic-legend">
+                        <div class="traffic-legend-item">
+                            <div class="traffic-legend-dot" style="background: var(--accent-blue);"></div>
+                            <span>Avg: 1.18 Gbps</span>
+                        </div>
+                        <div class="traffic-legend-item">
+                            <span style="color: var(--accent-green);">↑ 12% vs last hour</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="traffic-card">
+                    <div class="traffic-header">
+                        <div class="traffic-title">
+                            <i class="fas fa-arrow-up" style="color: var(--accent-cyan);"></i>
+                            Outbound Traffic
+                        </div>
+                    </div>
+                    <div class="traffic-value">1.08 Gbps</div>
+                    <div class="traffic-chart">
+                        <div class="traffic-bar outbound" style="height: 52%;" onclick="showToast('Outbound: 0.9 Gbps')"></div>
+                        <div class="traffic-bar outbound" style="height: 48%;" onclick="showToast('Outbound: 0.8 Gbps')"></div>
+                        <div class="traffic-bar outbound" style="height: 42%;" onclick="showToast('Outbound: 0.7 Gbps')"></div>
+                        <div class="traffic-bar outbound" style="height: 58%;" onclick="showToast('Outbound: 1.0 Gbps')"></div>
+                        <div class="traffic-bar outbound" style="height: 65%;" onclick="showToast('Outbound: 1.1 Gbps')"></div>
+                        <div class="traffic-bar outbound" style="height: 72%;" onclick="showToast('Outbound: 1.2 Gbps')"></div>
+                        <div class="traffic-bar outbound" style="height: 55%;" onclick="showToast('Outbound: 0.9 Gbps')"></div>
+                        <div class="traffic-bar outbound" style="height: 48%;" onclick="showToast('Outbound: 0.8 Gbps')"></div>
+                        <div class="traffic-bar outbound" style="height: 62%;" onclick="showToast('Outbound: 1.0 Gbps')"></div>
+                        <div class="traffic-bar outbound" style="height: 70%;" onclick="showToast('Outbound: 1.2 Gbps')"></div>
+                        <div class="traffic-bar outbound" style="height: 58%;" onclick="showToast('Outbound: 1.0 Gbps')"></div>
+                        <div class="traffic-bar outbound" style="height: 50%;" onclick="showToast('Outbound: 0.8 Gbps')"></div>
+                    </div>
+                    <div class="traffic-legend">
+                        <div class="traffic-legend-item">
+                            <div class="traffic-legend-dot" style="background: var(--accent-cyan);"></div>
+                            <span>Avg: 0.95 Gbps</span>
+                        </div>
+                        <div class="traffic-legend-item">
+                            <span style="color: var(--accent-green);">↑ 8% vs last hour</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="traffic-card">
+                    <div class="traffic-header">
+                        <div class="traffic-title">
+                            <i class="fas fa-exchange-alt" style="color: var(--accent-purple);"></i>
+                            Total Bandwidth
+                        </div>
+                    </div>
+                    <div class="traffic-value">2.40 Gbps</div>
+                    <div class="traffic-chart" style="gap: 3px;">
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 25px;"></div>
+                            <div class="traffic-bar outbound" style="height: 20px;"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 30px;"></div>
+                            <div class="traffic-bar outbound" style="height: 22px;"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 20px;"></div>
+                            <div class="traffic-bar outbound" style="height: 18px;"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 35px;"></div>
+                            <div class="traffic-bar outbound" style="height: 28px;"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 42px;"></div>
+                            <div class="traffic-bar outbound" style="height: 32px;"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 38px;"></div>
+                            <div class="traffic-bar outbound" style="height: 35px;"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 45px;"></div>
+                            <div class="traffic-bar outbound" style="height: 30px;"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 30px;"></div>
+                            <div class="traffic-bar outbound" style="height: 25px;"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 28px;"></div>
+                            <div class="traffic-bar outbound" style="height: 22px;"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 40px;"></div>
+                            <div class="traffic-bar outbound" style="height: 35px;"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 35px;"></div>
+                            <div class="traffic-bar outbound" style="height: 28px;"></div>
+                        </div>
+                        <div style="flex: 1; display: flex; flex-direction: column; gap: 2px;">
+                            <div class="traffic-bar inbound" style="height: 32px;"></div>
+                            <div class="traffic-bar outbound" style="height: 25px;"></div>
+                        </div>
+                    </div>
+                    <div class="traffic-legend">
+                        <div class="traffic-legend-item">
+                            <span>Capacity: 10 Gbps</span>
+                        </div>
+                        <div class="traffic-legend-item">
+                            <span style="color: var(--text-muted);">24% utilized</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Network Topology -->
+            <div class="topology-container" id="topologyContainer">
+                <div class="topology-header">
+                    <h3 class="topology-title">
+                        <i class="fas fa-project-diagram" style="color: var(--accent-blue);"></i>
+                        Network Topology
+                    </h3>
+                    <div class="topology-controls">
+                        <button class="topology-btn active">
+                            <i class="fas fa-sitemap"></i> Logical
+                        </button>
+                        <button class="topology-btn">
+                            <i class="fas fa-building"></i> Physical
+                        </button>
+                        <button class="topology-btn" onclick="toggleFullscreen()">
+                            <i class="fas fa-expand"></i> Fullscreen
+                        </button>
+                    </div>
+                </div>
+                <div class="topology-wrapper" id="topologyWrapper">
+                    <div class="topology-canvas" id="topologyCanvas">
+                        <div class="topology-grid"></div>
+                        
+                        <!-- Animated Connection Lines -->
+                        <div class="topology-connections">
+                            <!-- Internet to Firewall -->
+                            <div class="connection-line active" style="left: 640px; top: 150px; width: 100px; transform: rotate(90deg);"></div>
+                            
+                            <!-- Firewall to Core Router -->
+                            <div class="connection-line active" style="left: 640px; top: 310px; width: 100px; transform: rotate(90deg);"></div>
+                            
+                            <!-- Core Router to Distribution -->
+                            <div class="connection-line active" style="left: 420px; top: 470px; width: 180px; transform: rotate(35deg);"></div>
+                            <div class="connection-line warning" style="left: 640px; top: 470px; width: 100px; transform: rotate(90deg);"></div>
+                            <div class="connection-line down" style="left: 680px; top: 470px; width: 180px; transform: rotate(145deg);"></div>
+                            
+                            <!-- Distribution to Access -->
+                            <div class="connection-line active" style="left: 220px; top: 610px; width: 150px; transform: rotate(55deg);"></div>
+                            <div class="connection-line active" style="left: 380px; top: 610px; width: 120px; transform: rotate(125deg);"></div>
+                            <div class="connection-line active" style="left: 640px; top: 610px; width: 120px; transform: rotate(55deg);"></div>
+                            <div class="connection-line active" style="left: 700px; top: 610px; width: 150px; transform: rotate(125deg);"></div>
+                            <div class="connection-line down" style="left: 900px; top: 610px; width: 120px; transform: rotate(55deg);"></div>
+                            <div class="connection-line active" style="left: 950px; top: 610px; width: 150px; transform: rotate(125deg);"></div>
+                        </div>
+
+                        <!-- Animated Packets -->
+                        <div class="packet" style="left: 640px; top: 150px; --tx: 0px; --ty: 100px;"></div>
+                        <div class="packet" style="left: 640px; top: 310px; --tx: 0px; --ty: 100px;"></div>
+                        <div class="packet" style="left: 640px; top: 470px; --tx: -180px; --ty: 140px;"></div>
+                        <div class="packet" style="left: 640px; top: 470px; --tx: 0px; --ty: 140px;"></div>
+                        <div class="packet" style="left: 640px; top: 470px; --tx: 180px; --ty: 140px;"></div>
+
+                        <!-- Layer 1: Internet -->
+                        <div class="topology-node" style="left: 610px; top: 50px;" onclick="showNodeInfo('Internet', 'External Network', 'online')">
+                            <div class="node-device cloud">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-cloud"></i>
+                                </div>
+                                <div class="node-status online"></div>
+                            </div>
+                            <span class="node-label">🌐 Internet</span>
+                        </div>
+
+                        <!-- Layer 2: Firewall -->
+                        <div class="topology-node" style="left: 610px; top: 250px;" onclick="showNodeInfo('Firewall PA-3260', '192.168.1.254', 'online')">
+                            <div class="node-device firewall">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-shield-halved"></i>
+                                </div>
+                                <div class="node-status online"></div>
+                            </div>
+                            <span class="node-label">🔥 Firewall</span>
+                        </div>
+
+                        <!-- Layer 3: Core Router -->
+                        <div class="topology-node" style="left: 610px; top: 410px;" onclick="showNodeInfo('Core Router ISR-4451', '192.168.1.1', 'online')">
+                            <div class="node-device router">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-router"></i>
+                                </div>
+                                <div class="node-status online"></div>
+                            </div>
+                            <span class="node-label">📡 Core Router</span>
+                        </div>
+
+                        <!-- Layer 4: Distribution -->
+                        <div class="topology-node" style="left: 320px; top: 610px;" onclick="showNodeInfo('Dist Switch A', '192.168.1.2', 'online')">
+                            <div class="node-device switch">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-network-wired"></i>
+                                </div>
+                                <div class="node-status online"></div>
+                            </div>
+                            <span class="node-label">🔀 Dist-A</span>
+                        </div>
+
+                        <div class="topology-node" style="left: 610px; top: 610px;" onclick="showNodeInfo('Dist Switch B', '192.168.1.3', 'warning')">
+                            <div class="node-device switch">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-network-wired"></i>
+                                </div>
+                                <div class="node-status warning"></div>
+                            </div>
+                            <span class="node-label">🔀 Dist-B</span>
+                        </div>
+
+                        <div class="topology-node" style="left: 900px; top: 610px;" onclick="showNodeInfo('Dist Switch C', '192.168.1.4', 'offline')">
+                            <div class="node-device switch">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-network-wired"></i>
+                                </div>
+                                <div class="node-status offline"></div>
+                            </div>
+                            <span class="node-label">🔀 Dist-C</span>
+                        </div>
+
+                        <!-- Layer 5: Access -->
+                        <div class="topology-node" style="left: 120px; top: 810px;" onclick="showNodeInfo('SW-Floor1', '192.168.1.10', 'online')">
+                            <div class="node-device switch">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-ethernet"></i>
+                                </div>
+                                <div class="node-status online"></div>
+                            </div>
+                            <span class="node-label">🏢 Floor 1</span>
+                        </div>
+
+                        <div class="topology-node" style="left: 450px; top: 810px;" onclick="showNodeInfo('Server-A', '192.168.1.49', 'online')">
+                            <div class="node-device server">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-server"></i>
+                                </div>
+                                <div class="node-status online"></div>
+                            </div>
+                            <span class="node-label">🖥️ Server-A</span>
+                        </div>
+
+                        <div class="topology-node" style="left: 720px; top: 810px;" onclick="showNodeInfo('Server-B', '192.168.1.50', 'warning')">
+                            <div class="node-device server">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-database"></i>
+                                </div>
+                                <div class="node-status warning"></div>
+                            </div>
+                            <span class="node-label">🖥️ Server-B</span>
+                        </div>
+
+                        <div class="topology-node" style="left: 850px; top: 810px;" onclick="showNodeInfo('AP-Building-A', '192.168.1.100', 'online')">
+                            <div class="node-device ap">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-wifi"></i>
+                                </div>
+                                <div class="node-status online"></div>
+                            </div>
+                            <span class="node-label">📶 AP-A</span>
+                        </div>
+
+                        <div class="topology-node" style="left: 980px; top: 810px;" onclick="showNodeInfo('AP-Building-C', '192.168.1.105', 'offline')">
+                            <div class="node-device ap">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-wifi"></i>
+                                </div>
+                                <div class="node-status offline"></div>
+                            </div>
+                            <span class="node-label">📶 AP-C</span>
+                        </div>
+
+                        <div class="topology-node" style="left: 1100px; top: 810px;" onclick="showNodeInfo('SW-Floor3', '192.168.1.12', 'online')">
+                            <div class="node-device switch">
+                                <div class="icon-wrapper">
+                                    <i class="fas fa-ethernet"></i>
+                                </div>
+                                <div class="node-status online"></div>
+                            </div>
+                            <span class="node-label">🏢 Floor 3</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="topology-info">
+                    <div class="topology-stats">
+                        <div class="topology-stat">
+                            <div class="topology-stat-dot" style="background: var(--accent-green);"></div>
+                            <span>10 Online</span>
+                        </div>
+                        <div class="topology-stat">
+                            <div class="topology-stat-dot" style="background: var(--accent-yellow);"></div>
+                            <span>2 Warning</span>
+                        </div>
+                        <div class="topology-stat">
+                            <div class="topology-stat-dot" style="background: var(--accent-red);"></div>
+                            <span>2 Offline</span>
+                        </div>
+                    </div>
+                    <div class="bandwidth-display">
+                        <div class="bandwidth-item">
+                            <i class="fas fa-arrow-down" style="color: var(--accent-blue);"></i>
+                            <span class="bandwidth-value">1.32 Gbps</span>
+                            <span>In</span>
+                        </div>
+                        <div class="bandwidth-item">
+                            <i class="fas fa-arrow-up" style="color: var(--accent-cyan);"></i>
+                            <span class="bandwidth-value">1.08 Gbps</span>
+                            <span>Out</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Charts & Devices -->
+            <div class="grid-2">
+                <!-- Traffic Chart -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-chart-bar"></i>
+                            Traffic Overview (24H)
+                        </h3>
+                        <div class="card-actions">
+                            <button class="btn btn-secondary" style="padding: 8px 14px; font-size: 13px;">
+                                <i class="fas fa-clock"></i> 24H
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-container">
+                            <div class="chart-bars">
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 45%;" data-value="1.2 Gbps" onclick="showToast('00:00 - 1.2 Gbps')"></div>
+                                    <span class="chart-label">00:00</span>
+                                </div>
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 52%;" data-value="1.4 Gbps" onclick="showToast('02:00 - 1.4 Gbps')"></div>
+                                    <span class="chart-label">02:00</span>
+                                </div>
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 38%;" data-value="1.0 Gbps" onclick="showToast('04:00 - 1.0 Gbps')"></div>
+                                    <span class="chart-label">04:00</span>
+                                </div>
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 42%;" data-value="1.1 Gbps" onclick="showToast('06:00 - 1.1 Gbps')"></div>
+                                    <span class="chart-label">06:00</span>
+                                </div>
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 68%;" data-value="1.8 Gbps" onclick="showToast('08:00 - 1.8 Gbps')"></div>
+                                    <span class="chart-label">08:00</span>
+                                </div>
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 85%;" data-value="2.3 Gbps" onclick="showToast('10:00 - 2.3 Gbps')"></div>
+                                    <span class="chart-label">10:00</span>
+                                </div>
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 92%;" data-value="2.5 Gbps" onclick="showToast('12:00 - 2.5 Gbps')"></div>
+                                    <span class="chart-label">12:00</span>
+                                </div>
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 88%;" data-value="2.4 Gbps" onclick="showToast('14:00 - 2.4 Gbps')"></div>
+                                    <span class="chart-label">14:00</span>
+                                </div>
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 78%;" data-value="2.1 Gbps" onclick="showToast('16:00 - 2.1 Gbps')"></div>
+                                    <span class="chart-label">16:00</span>
+                                </div>
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 72%;" data-value="1.9 Gbps" onclick="showToast('18:00 - 1.9 Gbps')"></div>
+                                    <span class="chart-label">18:00</span>
+                                </div>
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 65%;" data-value="1.7 Gbps" onclick="showToast('20:00 - 1.7 Gbps')"></div>
+                                    <span class="chart-label">20:00</span>
+                                </div>
+                                <div class="chart-bar-wrapper">
+                                    <div class="chart-bar" style="height: 55%;" data-value="1.5 Gbps" onclick="showToast('22:00 - 1.5 Gbps')"></div>
+                                    <span class="chart-label">22:00</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="chart-legend">
+                            <div class="legend-item">
+                                <div class="legend-dot" style="background: var(--accent-blue);"></div>
+                                <span>Inbound</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-dot" style="background: var(--accent-cyan);"></div>
+                                <span>Outbound</span>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-dot" style="background: var(--accent-purple);"></div>
+                                <span>Peak: 2.5 Gbps @ 12:00</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Device Status -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">
+                            <i class="fas fa-microchip"></i>
+                            Critical Devices
+                        </h3>
+                        <a href="#" style="color: var(--accent-blue); font-size: 13px; text-decoration: none; font-weight: 600;">View All →</a>
+                    </div>
+                    <div class="card-body">
+                        <div class="device-list">
+                            <div class="device-row" onclick="showToast('Core Router - Main clicked')">
+                                <div class="device-icon router">
+                                    <i class="fas fa-router"></i>
+                                </div>
+                                <div class="device-details">
+                                    <div class="device-name">Core Router - Main</div>
+                                    <div class="device-meta">192.168.1.1 • Cisco ISR 4451</div>
+                                </div>
+                                <span class="status-badge online">Online</span>
+                            </div>
+                            <div class="device-row" onclick="showToast('Switch - Floor 1 clicked')">
+                                <div class="device-icon switch">
+                                    <i class="fas fa-exchange-alt"></i>
+                                </div>
+                                <div class="device-details">
+                                    <div class="device-name">Switch - Floor 1</div>
+                                    <div class="device-meta">192.168.1.10 • Catalyst 9300</div>
+                                </div>
+                                <span class="status-badge online">Online</span>
+                            </div>
+                            <div class="device-row" onclick="showToast('App Server - B clicked')">
+                                <div class="device-icon server">
+                                    <i class="fas fa-hdd"></i>
+                                </div>
+                                <div class="device-details">
+                                    <div class="device-name">App Server - B</div>
+                                    <div class="device-meta">192.168.1.50 • Dell R740</div>
+                                </div>
+                                <span class="status-badge warning">Warning</span>
+                            </div>
+                            <div class="device-row" onclick="showToast('Firewall - Primary clicked')">
+                                <div class="device-icon firewall">
+                                    <i class="fas fa-shield-alt"></i>
+                                </div>
+                                <div class="device-details">
+                                    <div class="device-name">Firewall - Primary</div>
+                                    <div class="device-meta">192.168.1.254 • Palo Alto</div>
+                                </div>
+                                <span class="status-badge online">Online</span>
+                            </div>
+                            <div class="device-row" onclick="showToast('AP - Building C clicked')">
+                                <div class="device-icon ap">
+                                    <i class="fas fa-wifi"></i>
+                                </div>
+                                <div class="device-details">
+                                    <div class="device-name">AP - Building C</div>
+                                    <div class="device-meta">192.168.1.105 • Meraki MR46</div>
+                                </div>
+                                <span class="status-badge offline">Offline</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alerts Section -->
+            <div class="card" style="margin-bottom: 28px;">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-bell"></i>
+                        Recent Alerts
+                    </h3>
+                    <button class="btn btn-secondary" style="padding: 8px 14px; font-size: 13px;">
+                        View All Alerts
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="alerts-list">
+                        <div class="alert-row critical" onclick="showToast('Alert: Device Unreachable')">
+                            <div class="alert-icon">
+                                <i class="fas fa-exclamation-circle"></i>
+                            </div>
+                            <div class="alert-content">
+                                <div class="alert-title">Device Unreachable - AP Building C</div>
+                                <div class="alert-desc">Wireless access point has been offline for 23 minutes. Last seen at 11:37 AM.</div>
+                                <div class="alert-meta">
+                                    <span><i class="fas fa-clock"></i> 5 min ago</span>
+                                    <span><i class="fas fa-tag"></i> Network</span>
+                                    <span><i class="fas fa-map-marker-alt"></i> Building C</span>
+                                </div>
+                            </div>
+                            <button class="action-btn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="alert-row major" onclick="showToast('Alert: High CPU Utilization')">
+                            <div class="alert-icon">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="alert-content">
+                                <div class="alert-title">High CPU Utilization - App Server B</div>
+                                <div class="alert-desc">CPU usage at 94% for the last 15 minutes. Threshold: 85%</div>
+                                <div class="alert-meta">
+                                    <span><i class="fas fa-clock"></i> 12 min ago</span>
+                                    <span><i class="fas fa-tag"></i> Performance</span>
+                                    <span><i class="fas fa-server"></i> 192.168.1.50</span>
+                                </div>
+                            </div>
+                            <button class="action-btn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <div class="alert-row minor" onclick="showToast('Alert: Port Flapping Detected')">
+                            <div class="alert-icon">
+                                <i class="fas fa-exclamation"></i>
+                            </div>
+                            <div class="alert-content">
+                                <div class="alert-title">Port Flapping Detected - Switch Floor 2</div>
+                                <div class="alert-desc">Port Gi1/0/24 experiencing intermittent connectivity issues</div>
+                                <div class="alert-meta">
+                                    <span><i class="fas fa-clock"></i> 1 hour ago</span>
+                                    <span><i class="fas fa-tag"></i> Link Status</span>
+                                    <span><i class="fas fa-exchange-alt"></i> Gi1/0/24</span>
+                                </div>
+                            </div>
+                            <button class="action-btn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer style="margin-top: 32px; padding-top: 24px; border-top: 2px solid var(--border-color); text-align: center; color: var(--text-muted); font-size: 13px;">
+            <p>NetWatch Network Monitoring © 2026 • Last updated: <span id="lastUpdate" style="color: var(--text-secondary);"></span></p>
+        </footer>
+    </main>
+
+    <script>
+        // Update time
+        function updateTime() {
+            const now = new Date();
+            const options = { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric', 
+                hour: '2-digit', 
+                minute: '2-digit',
+                second: '2-digit'
+            };
+            document.getElementById('lastUpdate').textContent = now.toLocaleString('id-ID', options);
+        }
+        updateTime();
+        setInterval(updateTime, 1000);
+
+        // Refresh animation
+        function refreshData() {
+            const btn = document.querySelector('.btn-primary i');
+            btn.style.transition = 'transform 0.5s';
+            btn.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                btn.style.transform = 'rotate(0deg)';
+                updateTime();
+                showToast('Data refreshed successfully!');
+            }, 500);
+        }
+
+        // Chart animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const bars = document.querySelectorAll('.chart-bar, .traffic-bar');
+            bars.forEach((bar, index) => {
+                const height = bar.style.height;
+                bar.style.height = '0%';
+                setTimeout(() => {
+                    bar.style.height = height;
+                }, index * 30);
+            });
+        });
+
+        // Sidebar navigation
+        const navLinks = document.querySelectorAll('.nav-link[data-page]');
+        const pageTitle = document.getElementById('pageTitle');
+        const pageSubtitle = document.getElementById('pageSubtitle');
+        const pageIcon = document.getElementById('pageIcon');
+
+        const pageData = {
+            dashboard: { title: 'Dashboard', subtitle: 'Real-time monitoring and analytics', icon: 'fa-th-large' },
+            devices: { title: 'Devices', subtitle: 'Manage and monitor network devices', icon: 'fa-server' },
+            topology: { title: 'Topology', subtitle: 'Visual network topology map', icon: 'fa-project-diagram' },
+            analytics: { title: 'Analytics', subtitle: 'Traffic analytics and reports', icon: 'fa-chart-line' },
+            alerts: { title: 'Alerts', subtitle: 'Active alerts and notifications', icon: 'fa-bell' },
+            reports: { title: 'Reports', subtitle: 'Generate and view reports', icon: 'fa-file-alt' },
+            settings: { title: 'Settings', subtitle: 'System configuration', icon: 'fa-cog' },
+            users: { title: 'Users', subtitle: 'User management', icon: 'fa-users' },
+            security: { title: 'Security', subtitle: 'Security policies and logs', icon: 'fa-shield-alt' }
+        };
+
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                const page = this.dataset.page;
+                
+                // Update active state
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update page header
+                const data = pageData[page];
+                pageTitle.textContent = data.title;
+                pageSubtitle.textContent = data.subtitle;
+                pageIcon.innerHTML = `<i class="fas ${data.icon}"></i>`;
+                
+                // Show toast
+                showToast(`Navigating to ${data.title}`);
+            });
+        });
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 30px;
+                right: 30px;
+                background: var(--text-primary);
+                color: white;
+                padding: 14px 24px;
+                border-radius: 12px;
+                font-size: 14px;
+                font-weight: 500;
+                box-shadow: var(--shadow-lg);
+                z-index: 10000;
+                animation: slideIn 0.3s ease;
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
+        }
+
+        // Add animations
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateX(100px); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateX(0); opacity: 1; }
+                to { transform: translateX(100px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Node info
+        function showNodeInfo(name, ip, status) {
+            showToast(`${name} • ${ip} • ${status}`);
+        }
+
+        // Fullscreen topology
+        let isFullscreen = false;
+        function toggleFullscreen() {
+            const container = document.getElementById('topologyContainer');
+            isFullscreen = !isFullscreen;
+            
+            if (isFullscreen) {
+                container.classList.add('topology-fullscreen');
+                document.querySelector('.topology-btn[onclick="toggleFullscreen()"]').innerHTML = '<i class="fas fa-compress"></i> Exit Full';
+            } else {
+                container.classList.remove('topology-fullscreen');
+                document.querySelector('.topology-btn[onclick="toggleFullscreen()"]').innerHTML = '<i class="fas fa-expand"></i> Fullscreen';
+            }
+        }
+    </script>
+</body>
+</html>

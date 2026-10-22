@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Click Me</title>
+  <style>
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: #0f172a;
+    }
+    button {
+      padding: 14px 32px;
+      font-size: 18px;
+      font-weight: 600;
+      color: #fff;
+      background: #2563eb;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    button:hover { background: #1d4ed8; }
+    button:active { transform: scale(0.97); }
+  </style>
+</head>
+<body>
+  <button id="btn">Click Me</button>
+
+  <script>
+    document.getElementById('btn').addEventListener('click', function () {
+      alert('Hello from UOI Stabil!');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Todo List</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 48px 16px;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: linear-gradient(160deg, #0f172a, #1e293b);
+      color: #e2e8f0;
+    }
+    .app {
+      width: 100%;
+      max-width: 520px;
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      padding: 28px;
+      box-shadow: 0 20px 50px rgba(0,0,0,.45);
+      height: fit-content;
+    }
+    h1 {
+      margin: 0 0 4px;
+      font-size: 24px;
+      letter-spacing: -.02em;
+    }
+    .sub {
+      margin: 0 0 24px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    .row { display: flex; gap: 10px; }
+    #input {
+      flex: 1;
+      padding: 12px 14px;
+      font-size: 15px;
+      color: #e2e8f0;
+      background: #0b1220;
+      border: 1px solid #263244;
+      border-radius: 10px;
+      outline: none;
+      transition: border-color .15s;
+    }
+    #input:focus { border-color: #3b82f6; }
+    #input::placeholder { color: #64748b; }
+    #add {
+      padding: 12px 22px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      background: #2563eb;
+      border: 0;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background .15s;
+    }
+    #add:hover { background: #1d4ed8; }
+    #add:active { transform: scale(.97); }
+    ul {
+      list-style: none;
+      margin: 24px 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    li {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      background: #0b1220;
+      border: 1px solid #1e293b;
+      border-radius: 10px;
+      animation: slide .18s ease;
+    }
+    @keyframes slide {
+      from { opacity: 0; transform: translateY(-4px); }
+      to   { opacity: 1; transform: none; }
+    }
+    li.done .label {
+      text-decoration: line-through;
+      color: #64748b;
+    }
+    .check {
+      width: 20px;
+      height: 20px;
+      flex: 0 0 20px;
+      accent-color: #2563eb;
+      cursor: pointer;
+    }
+    .label {
+      flex: 1;
+      font-size: 15px;
+      word-break: break-word;
+      cursor: pointer;
+    }
+    .del {
+      background: transparent;
+      border: 0;
+      color: #64748b;
+      font-size: 18px;
+      line-height: 1;
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: 6px;
+      transition: color .15s, background .15s;
+    }
+    .del:hover { color: #f87171; background: #1f2937; }
+    .empty {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 14px;
+      color: #64748b;
+    }
+    .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 20px;
+      font-size: 13px;
+      color: #94a3b8;
+    }
+    #clearAll {
+      background: transparent;
+      border: 1px solid #263244;
+      color: #94a3b8;
+      padding: 7px 14px;
+      font-size: 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all .15s;
+    }
+    #clearAll:hover { color: #f87171; border-color: #f87171; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <h1>Todo List</h1>
+    <p class="sub">Tambah tugas, centang kalau selesai. Tersimpan otomatis.</p>
+
+    <div class="row">
+      <input id="input" type="text" placeholder="Mau ngerjain apa hari ini?" autocomplete="off" maxlength="200">
+      <button id="add">Tambah</button>
+    </div>
+
+    <ul id="list"></ul>
+    <p class="empty" id="empty">Belum ada tugas. Tambahkan satu di atas.</p>
+
+    <div class="footer">
+      <span id="counter">0 dari 0 selesai</span>
+      <button id="clearAll">Hapus selesai</button>
+    </div>
+  </div>
+
+  <script>
+    (function () {
+      var KEY = 'todo-app-v1';
+      var input = document.getElementById('input');
+      var addBtn = document.getElementById('add');
+      var list = document.getElementById('list');
+      var empty = document.getElementById('empty');
+      var counter = document.getElementById('counter');
+      var clearAll = document.getElementById('clearAll');
+
+      var todos = load();
+
+      function load() {
+        try {
+          var raw = localStorage.getItem(KEY);
+          var parsed = raw ? JSON.parse(raw) : [];
+          return Array.isArray(parsed) ? parsed : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function save() {
+        try { localStorage.setItem(KEY, JSON.stringify(todos)); } catch (e) {}
+      }
+
+      function render() {
+        list.innerHTML = '';
+
+        todos.forEach(function (todo) {
+          var li = document.createElement('li');
+          if (todo.done) li.className = 'done';
+
+          var cb = document.createElement('input');
+          cb.type = 'checkbox';
+          cb.className = 'check';
+          cb.checked = todo.done;
+          cb.addEventListener('change', function () {
+            todo.done = cb.checked;
+            save();
+            render();
+          });
+
+          var label = document.createElement('span');
+          label.className = 'label';
+          label.textContent = todo.text;
+          label.addEventListener('click', function () {
+            todo.done = !todo.done;
+            save();
+            render();
+          });
+
+          var del = document.createElement('button');
+          del.className = 'del';
+          del.textContent = '\u00D7';
+          del.title = 'Hapus';
+          del.addEventListener('click', function () {
+            todos = todos.filter(function (t) { return t.id !== todo.id; });
+            save();
+            render();
+          });
+
+          li.appendChild(cb);
+          li.appendChild(label);
+          li.appendChild(del);
+          list.appendChild(li);
+        });
+
+        empty.style.display = todos.length ? 'none' : 'block';
+
+        var doneCount = todos.filter(function (t) { return t.done; }).length;
+        counter.textContent = doneCount + ' dari ' + todos.length + ' selesai';
+      }
+
+      function addTodo() {
+        var text = input.value.trim();
+        if (!text) { input.focus(); return; }
+        todos.unshift({ id: Date.now() + '-' + Math.random().toString(36).slice(2, 8), text: text, done: false });
+        input.value = '';
+        save();
+        render();
+        input.focus();
+      }
+
+      addBtn.addEventListener('click', addTodo);
+      input.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') addTodo();
+      });
+
+      clearAll.addEventListener('click', function () {
+        var remaining = todos.filter(function (t) { return !t.done; });
+        if (remaining.length === todos.length) return;
+        todos = remaining;
+        save();
+        render();
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>
