@@ -759,30 +759,31 @@
     }
 
     /* Page entrance */
-    body { opacity: 0; animation: pageIn .6s ease forwards; transition: background .4s ease, color .4s ease; }
+    body { opacity: 0; animation: pageIn .4s ease forwards; transition: background .4s ease, color .4s ease; }
     @keyframes pageIn { to { opacity: 1; } }
+    body.no-transition * { transition: none !important; }
 
     /* ── Theme Toggle ── */
     .theme-toggle {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      z-index: 100;
-      width: 48px; height: 48px;
+      top: 16px;
+      right: 16px;
+      z-index: 9999;
+      width: 52px; height: 52px;
       background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 14px;
+      border: 2px solid var(--border);
+      border-radius: 16px;
       cursor: pointer;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.3rem;
-      box-shadow: var(--shadow-md);
+      font-size: 1.4rem;
+      box-shadow: var(--shadow-lg), 0 0 0 1px rgba(139,92,246,0.1);
       transition: all .3s cubic-bezier(.4,0,.2,1);
     }
     .theme-toggle:hover {
-      transform: scale(1.08) rotate(8deg);
-      box-shadow: var(--shadow-lg);
+      transform: scale(1.1) rotate(10deg);
+      box-shadow: var(--shadow-xl), 0 0 20px rgba(139,92,246,0.3);
       border-color: var(--accent);
     }
     .theme-toggle:active { transform: scale(0.95); }
@@ -800,7 +801,7 @@
 <body>
 
   <!-- Theme Toggle -->
-  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle dark/light mode">
     <span class="icon-sun">☀️</span>
     <span class="icon-moon">🌙</span>
   </button>
@@ -1020,10 +1021,12 @@
     if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.body.classList.add('dark');
   }
 
-  themeToggle.addEventListener('click', () => {
+  themeToggle.addEventListener('click', (e) => {
+    e.preventDefault();
     document.body.classList.toggle('dark');
     const dark = document.body.classList.contains('dark');
     try { localStorage.setItem('promptforge-theme', dark ? 'dark' : 'light'); } catch(e) {}
+    console.log('Theme toggled to', dark ? 'dark' : 'light');
   });
 
   // ── Chip toggle ──
