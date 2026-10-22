@@ -36,7 +36,7 @@
       --shadow-glow: 0 8px 32px rgba(139,92,246,0.2), 0 2px 8px rgba(139,92,246,0.1);
     }
 
-    .dark {
+    [data-theme="dark"] {
       --bg: #0d0f18;
       --surface: #151825;
       --surface2: #1a1d2e;
@@ -74,37 +74,45 @@
       color: var(--text);
       min-height: 100vh;
       overflow-x: hidden;
+      transition: background .4s ease, color .4s ease;
     }
 
-    /* ── Soft gradient background blobs ── */
-    .bg-blob {
+    /* ── Theme Toggle Button ── */
+    .theme-toggle {
       position: fixed;
-      border-radius: 50%;
-      filter: blur(100px);
-      pointer-events: none;
-      z-index: 0;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      width: 56px;
+      height: 56px;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: var(--shadow-lg), 0 0 0 1px rgba(139,92,246,0.1);
+      transition: all .3s cubic-bezier(.4,0,.2,1);
     }
-    .blob-1 {
-      width: 600px; height: 600px;
-      background: rgba(167,139,250,0.12);
-      top: -200px; right: -150px;
-      animation: blobFloat1 20s ease-in-out infinite alternate;
+    .theme-toggle:hover {
+      transform: scale(1.1) rotate(10deg);
+      box-shadow: var(--shadow-xl), 0 0 20px rgba(139,92,246,0.3);
+      border-color: var(--accent);
     }
-    .blob-2 {
-      width: 500px; height: 500px;
-      background: rgba(244,114,182,0.1);
-      bottom: -150px; left: -100px;
-      animation: blobFloat2 25s ease-in-out infinite alternate;
+    .theme-toggle:active { transform: scale(0.95); }
+    
+    .theme-toggle .icon-sun,
+    .theme-toggle .icon-moon {
+      position: absolute;
+      transition: all .4s cubic-bezier(.4,0,.2,1);
     }
-    .blob-3 {
-      width: 350px; height: 350px;
-      background: rgba(110,231,183,0.1);
-      top: 40%; left: 30%;
-      animation: blobFloat3 18s ease-in-out infinite alternate;
-    }
-    @keyframes blobFloat1 { 0%{transform:translate(0,0)} 100%{transform:translate(-60px,40px)} }
-    @keyframes blobFloat2 { 0%{transform:translate(0,0)} 100%{transform:translate(50px,-30px)} }
-    @keyframes blobFloat3 { 0%{transform:translate(-50%,-50%) scale(1)} 100%{transform:translate(-40%,-60%) scale(1.15)} }
+    .theme-toggle .icon-sun { opacity: 1; transform: rotate(0deg) scale(1); }
+    .theme-toggle .icon-moon { opacity: 0; transform: rotate(90deg) scale(0.5); }
+    
+    [data-theme="dark"] .theme-toggle .icon-sun { opacity: 0; transform: rotate(-90deg) scale(0.5); }
+    [data-theme="dark"] .theme-toggle .icon-moon { opacity: 1; transform: rotate(0deg) scale(1); }
 
     /* ── Layout ── */
     .layout {
@@ -121,7 +129,7 @@
       .layout { grid-template-columns: 1fr; padding: 20px 16px; }
     }
 
-    /* ── Card — soft shadow, pastel feel ── */
+    /* ── Card ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -331,23 +339,11 @@
       opacity: 0;
       transition: opacity .3s;
     }
-    .btn-generate::after {
-      content: '';
-      position: absolute;
-      top: -50%; left: -50%;
-      width: 200%; height: 200%;
-      background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.08), transparent 30%);
-      animation: btnSpin 4s linear infinite;
-      opacity: 0;
-      transition: opacity .3s;
-    }
-    @keyframes btnSpin { to { transform: rotate(360deg); } }
     .btn-generate:hover {
       transform: translateY(-3px);
       box-shadow: 0 10px 36px rgba(139,92,246,0.4), 0 4px 12px rgba(139,92,246,0.25), inset 0 1px 0 rgba(255,255,255,0.25);
     }
     .btn-generate:hover::before { opacity: 1; }
-    .btn-generate:hover::after { opacity: 1; }
     .btn-generate:active { transform: translateY(0) scale(0.97); box-shadow: 0 2px 8px rgba(139,92,246,0.3); }
 
     .btn-generate .btn-text {
@@ -608,8 +604,6 @@
       position: relative;
       overflow: hidden;
       box-shadow: var(--shadow-sm);
-      opacity: 1;
-      transform: none;
     }
     .template-card::before {
       content: '';
@@ -654,7 +648,7 @@
       pointer-events: none;
       transition: background .4s ease;
     }
-    .dark .header-wrap::before {
+    [data-theme="dark"] .header-wrap::before {
       background: radial-gradient(ellipse, rgba(139,92,246,0.2) 0%, transparent 70%);
     }
 
@@ -665,7 +659,6 @@
       margin-bottom: 14px;
     }
 
-    /* Custom logo mark */
     .logo-mark {
       width: 64px; height: 64px;
       position: relative;
@@ -762,41 +755,6 @@
     /* Page entrance */
     body { opacity: 0; animation: pageIn .4s ease forwards; transition: background .4s ease, color .4s ease; }
     @keyframes pageIn { to { opacity: 1; } }
-    body.no-transition * { transition: none !important; }
-
-    /* ── Theme Toggle ── */
-    .theme-toggle {
-      position: fixed;
-      top: 16px;
-      right: 16px;
-      z-index: 9999;
-      width: 52px; height: 52px;
-      background: var(--surface);
-      border: 2px solid var(--border);
-      border-radius: 16px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      box-shadow: var(--shadow-lg), 0 0 0 1px rgba(139,92,246,0.1);
-      transition: all .3s cubic-bezier(.4,0,.2,1);
-    }
-    .theme-toggle:hover {
-      transform: scale(1.1) rotate(10deg);
-      box-shadow: var(--shadow-xl), 0 0 20px rgba(139,92,246,0.3);
-      border-color: var(--accent);
-    }
-    .theme-toggle:active { transform: scale(0.95); }
-    .theme-toggle .icon-sun,
-    .theme-toggle .icon-moon {
-      position: absolute;
-      transition: all .4s cubic-bezier(.4,0,.2,1);
-    }
-    .dark .theme-toggle .icon-sun { opacity: 0; transform: rotate(-90deg) scale(0.5); }
-    .dark .theme-toggle .icon-moon { opacity: 1; transform: rotate(0deg) scale(1); }
-    .theme-toggle .icon-sun { opacity: 1; transform: rotate(0deg) scale(1); }
-    .theme-toggle .icon-moon { opacity: 0; transform: rotate(90deg) scale(0.5); }
   </style>
 </head>
 <body>
@@ -1011,30 +969,54 @@
 
 <script>
   // ── Theme Toggle ──
-  const themeToggle = document.getElementById('themeToggle');
-  
-  // Restore from localStorage first
-  let isDark = false;
-  try {
-    const saved = localStorage.getItem('promptforge-theme');
-    if (saved === 'dark') isDark = true;
-    else if (saved === 'light') isDark = false;
-    else isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  } catch(e) {
-    isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }
-  
-  if (isDark) {
-    document.body.classList.add('dark');
-  } else {
-    document.body.classList.remove('dark');
-  }
-
-  themeToggle.addEventListener('click', () => {
-    document.body.classList.toggle('dark');
-    const dark = document.body.classList.contains('dark');
-    try { localStorage.setItem('promptforge-theme', dark ? 'dark' : 'light'); } catch(e) {}
-  });
+  (function() {
+    const toggle = document.getElementById('themeToggle');
+    if (!toggle) {
+      console.error('Theme toggle button not found!');
+      return;
+    }
+    
+    // Check saved theme
+    let isDark = false;
+    try {
+      const saved = localStorage.getItem('promptforge-theme');
+      if (saved === 'dark') isDark = true;
+      else if (saved === 'light') isDark = false;
+      else isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    } catch(e) {
+      isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    }
+    
+    // Apply theme immediately
+    if (isDark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+    }
+    
+    // Toggle handler
+    toggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      
+      const current = document.documentElement.getAttribute('data-theme');
+      const willBeDark = current !== 'dark';
+      
+      if (willBeDark) {
+        document.documentElement.setAttribute('data-theme', 'dark');
+      } else {
+        document.documentElement.removeAttribute('data-theme');
+      }
+      
+      try {
+        localStorage.setItem('promptforge-theme', willBeDark ? 'dark' : 'light');
+      } catch(e) {}
+      
+      console.log('Theme toggled to:', willBeDark ? 'dark' : 'light');
+    });
+    
+    console.log('Theme toggle initialized, isDark:', isDark);
+  })();
 
   // ── Chip toggle ──
   document.querySelectorAll('.chip-group').forEach(group => {
@@ -1132,6 +1114,13 @@
     ea_trading: "Buatkan Expert Advisor (EA) dengan strategi: ",
   };
   document.querySelectorAll('.template-card').forEach((card, i) => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(16px)';
+    card.style.transition = 'opacity .5s cubic-bezier(.4,0,.2,1), transform .5s cubic-bezier(.4,0,.2,1)';
+    setTimeout(() => {
+      card.style.opacity = '1';
+      card.style.transform = 'translateY(0)';
+    }, 300 + i * 70);
     card.addEventListener('click', () => {
       document.getElementById('humanInput').value = templates[card.dataset.template] + ' ';
       document.getElementById('humanInput').focus();
