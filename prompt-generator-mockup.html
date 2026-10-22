@@ -759,11 +759,7 @@
 </head>
 <body>
 
-  <!-- Theme Toggle -->
-  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-    <span class="icon-sun">☀️</span>
-    <span class="icon-moon">🌙</span>
-  </button>
+  <button id="themeToggle" style="position:fixed;top:20px;right:20px;z-index:9999;width:60px;height:60px;background:#fff;border:2px solid #e8e4df;border-radius:16px;cursor:pointer;font-size:1.5rem;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,0.1);" onclick="document.documentElement.setAttribute('data-theme', document.documentElement.getAttribute('data-theme')==='dark'?'':'dark');alert('Clicked!');">☀️</button>
 
   <!-- Background blobs -->
   <div class="bg-blob blob-1"></div>
@@ -970,48 +966,33 @@
 <script>
   // ── Theme Toggle ──
   const themeToggle = document.getElementById('themeToggle');
-  
-  // Check saved theme
-  let isDark = false;
-  try {
-    const saved = localStorage.getItem('promptforge-theme');
-    if (saved === 'dark') isDark = true;
-    else if (saved === 'light') isDark = false;
-    else isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  } catch(e) {
-    isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  }
-  
-  // Apply theme immediately
-  if (isDark) {
-    document.documentElement.setAttribute('data-theme', 'dark');
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-  }
-  
-  console.log('Theme toggle initialized, isDark:', isDark);
+  console.log('Button element:', themeToggle);
   
   if (themeToggle) {
-    themeToggle.addEventListener('click', function() {
-      alert('Button clicked! Current theme: ' + document.documentElement.getAttribute('data-theme'));
+    themeToggle.addEventListener('click', function(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('CLICK FIRED!');
+      alert('CLICKED! Current: ' + document.documentElement.getAttribute('data-theme'));
       
       const current = document.documentElement.getAttribute('data-theme');
       const willBeDark = current !== 'dark';
       
       if (willBeDark) {
         document.documentElement.setAttribute('data-theme', 'dark');
+        themeToggle.textContent = '🌙';
       } else {
         document.documentElement.removeAttribute('data-theme');
+        themeToggle.textContent = '☀️';
       }
       
       try {
         localStorage.setItem('promptforge-theme', willBeDark ? 'dark' : 'light');
       } catch(e) {}
-      
-      console.log('Theme toggled to:', willBeDark ? 'dark' : 'light');
     });
+    console.log('Event listener attached');
   } else {
-    console.error('Theme toggle button NOT FOUND!');
+    console.error('BUTTON NOT FOUND!');
   }
 
   // ── Chip toggle ──
