@@ -36,7 +36,8 @@
       --shadow-glow: 0 8px 32px rgba(139,92,246,0.2), 0 2px 8px rgba(139,92,246,0.1);
     }
 
-    .dark {      --bg: #0d0f18;
+    .dark {
+      --bg: #0d0f18;
       --surface: #151825;
       --surface2: #1a1d2e;
       --border: #2a2d3e;
@@ -801,11 +802,10 @@
 <body>
 
   <!-- Theme Toggle -->
-  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme" title="Toggle dark/light mode">
+  <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
     <span class="icon-sun">☀️</span>
     <span class="icon-moon">🌙</span>
   </button>
-  <div id="themeLabel" style="position:fixed;top:76px;right:16px;z-index:9999;font-size:.7rem;color:var(--muted);background:var(--surface);padding:4px 10px;border-radius:8px;border:1px solid var(--border);box-shadow:var(--shadow-sm);pointer-events:none;">☀️ Light</div>
 
   <!-- Background blobs -->
   <div class="bg-blob blob-1"></div>
@@ -1012,29 +1012,29 @@
 <script>
   // ── Theme Toggle ──
   const themeToggle = document.getElementById('themeToggle');
+  
   // Restore from localStorage first
+  let isDark = false;
   try {
     const saved = localStorage.getItem('promptforge-theme');
-    if (saved === 'dark') document.body.classList.add('dark');
-    else if (saved === 'light') document.body.classList.remove('dark');
-    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.body.classList.add('dark');
+    if (saved === 'dark') isDark = true;
+    else if (saved === 'light') isDark = false;
+    else isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   } catch(e) {
-    if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.body.classList.add('dark');
+    isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   }
-  // Update label
-  const initialLabel = document.getElementById('themeLabel');
-  if (initialLabel) initialLabel.textContent = document.body.classList.contains('dark') ? '🌙 Dark' : '☀️ Light';
+  
+  if (isDark) {
+    document.body.classList.add('dark');
+  } else {
+    document.body.classList.remove('dark');
+  }
 
-  themeToggle.addEventListener('click', (e) => {
-    e.preventDefault();
+  themeToggle.addEventListener('click', () => {
     document.body.classList.toggle('dark');
     const dark = document.body.classList.contains('dark');
     try { localStorage.setItem('promptforge-theme', dark ? 'dark' : 'light'); } catch(e) {}
-    const label = document.getElementById('themeLabel');
-    if (label) label.textContent = dark ? '🌙 Dark' : '☀️ Light';
   });
-  // Debug: verify button exists
-  console.log('Theme toggle button found:', !!themeToggle);
 
   // ── Chip toggle ──
   document.querySelectorAll('.chip-group').forEach(group => {
