@@ -1,0 +1,140 @@
+[
+  {
+    "model": "agnes-2.5-flash",
+    "results": [
+      {
+        "test": {
+          "id": "math",
+          "label": "Hitungan",
+          "category": "Logika",
+          "prompt": "Budi membeli 7 pensil seharga Rp 3.000 per buah dan membayar dengan uang Rp 50.000. Berapa kembaliannya? Jawab angka saja."
+        },
+        "verdict": "pass",
+        "text": "\n\n29000",
+        "latencyMs": 1559,
+        "tokens": 92
+      },
+      {
+        "test": {
+          "id": "code",
+          "label": "Fungsi palindrom",
+          "category": "Koding",
+          "prompt": "Tulis fungsi JavaScript bernama isPalindrome(s) yang mengabaikan huruf besar/kecil dan karakter selain huruf atau angka. Balas hanya kode."
+        },
+        "verdict": "pass",
+        "text": "\n\n```javascript\nfunction isPalindrome(s) {\n  const clean = s.replace(/[^a-zA-Z0-9]/g, '').toLowerCase();\n  return clean === clean.split('').reverse().join('');\n}\n```",
+        "latencyMs": 1642,
+        "tokens": 78
+      },
+      {
+        "test": {
+          "id": "json",
+          "label": "Output JSON",
+          "category": "Instruksi",
+          "prompt": "Balas HANYA JSON valid dengan key \"name\" dan \"age\" untuk: Sinta, 27 tahun. Tanpa markdown dan tanpa penjelasan."
+        },
+        "verdict": "error",
+        "text": "",
+        "error": "You’ve reached the API rate limit for free users. Upgrade to a Token Plan to unlock higher limits and continue using the API without interruption. (request id: 20261025151910558036021feCtYKTR)",
+        "latencyMs": 670,
+        "tokens": null
+      },
+      {
+        "test": {
+          "id": "knowledge",
+          "label": "Pengetahuan umum",
+          "category": "Pengetahuan",
+          "prompt": "Apa ibu kota Australia? Jawab satu kata."
+        },
+        "verdict": "error",
+        "text": "",
+        "error": "You’ve reached the API rate limit for free users. Upgrade to a Token Plan to unlock higher limits and continue using the API without interruption. (request id: 20261025151910661831568Yy8ylHky)",
+        "latencyMs": 103,
+        "tokens": null
+      },
+      {
+        "test": {
+          "id": "vision",
+          "label": "Baca gambar",
+          "category": "Vision",
+          "prompt": "Ada angka besar apa di gambar ini? Jawab angka saja."
+        },
+        "verdict": "error",
+        "text": "",
+        "error": "You’ve reached the API rate limit for free users. Upgrade to a Token Plan to unlock higher limits and continue using the API without interruption. (request id: 20261025151910797651877qDtO3QRJ)",
+        "latencyMs": 125,
+        "tokens": null
+      }
+    ]
+  },
+  {
+    "model": "agnes-3.0-flash",
+    "results": [
+      {
+        "test": {
+          "id": "math",
+          "label": "Hitungan",
+          "category": "Logika",
+          "prompt": "Budi membeli 7 pensil seharga Rp 3.000 per buah dan membayar dengan uang Rp 50.000. Berapa kembaliannya? Jawab angka saja."
+        },
+        "verdict": "error",
+        "text": "",
+        "error": "You’ve reached the API rate limit for free users. Upgrade to a Token Plan to unlock higher limits and continue using the API without interruption. (request id: 20261025151910925421007HLb4uLTD)",
+        "latencyMs": 158,
+        "tokens": null
+      },
+      {
+        "test": {
+          "id": "code",
+          "label": "Fungsi palindrom",
+          "category": "Koding",
+          "prompt": "Tulis fungsi JavaScript bernama isPalindrome(s) yang mengabaikan huruf besar/kecil dan karakter selain huruf atau angka. Balas hanya kode."
+        },
+        "verdict": "error",
+        "text": "",
+        "error": "You’ve reached the API rate limit for free users. Upgrade to a Token Plan to unlock higher limits and continue using the API without interruption. (request id: 2026102515191141719224MyajF8SP)",
+        "latencyMs": 88,
+        "tokens": null
+      },
+      {
+        "test": {
+          "id": "json",
+          "label": "Output JSON",
+          "category": "Instruksi",
+          "prompt": "Balas HANYA JSON valid dengan key \"name\" dan \"age\" untuk: Sinta, 27 tahun. Tanpa markdown dan tanpa penjelasan."
+        },
+        "verdict": "error",
+        "text": "",
+        "error": "You’ve reached the API rate limit for free users. Upgrade to a Token Plan to unlock higher limits and continue using the API without interruption. (request id: 20261025151911112062703lqOC5dZl)",
+        "latencyMs": 64,
+        "tokens": null
+      },
+      {
+        "test": {
+          "id": "knowledge",
+          "label": "Pengetahuan umum",
+          "category": "Pengetahuan",
+          "prompt": "Apa ibu kota Australia? Jawab satu kata."
+        },
+        "verdict": "error",
+        "text": "",
+        "error": "You’ve reached the API rate limit for free users. Upgrade to a Token Plan to unlock higher limits and continue using the API without interruption. (request id: 20261025151911172397545TZKCx5bx)",
+        "latencyMs": 57,
+        "tokens": null
+      },
+      {
+        "test": {
+          "id": "vision",
+          "label": "Baca gambar",
+          "category": "Vision",
+          "prompt": "Ada angka besar apa di gambar ini? Jawab angka saja."
+        },
+        "verdict": "error",
+        "text": "",
+        "error": "You’ve reached the API rate limit for free users. Upgrade to a Token Plan to unlock higher limits and continue using the API without interruption. (request id: 20261025151911238791491hmS1npSZ)",
+        "latencyMs": 63,
+        "tokens": null
+      }
+    ]
+  }
+]

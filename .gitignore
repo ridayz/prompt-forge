@@ -32,3 +32,22 @@ build/
 .idea/
 .vscode/
 .DS_Store
+
+# Samuel-SSLabs repos
+Canvas-API/
+
+# Samuel-SSLabs repos
+CupTracker/
+
+# Samuel-SSLabs repos
+NotifWatcher/
+
+# Samuel-SSLabs repos
+Port-Integration/
+
+# Samuel-SSLabs repos
+Port-Mobile/
+
+# Samuel-SSLabs repos
+Setup-Deck/
+analysis/Intip-rebuild/assets/ui_256x256_248580032.png

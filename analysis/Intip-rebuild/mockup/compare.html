@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<title>Intip asli vs Intip-Rebuild â€” verifikasi visual</title>
+<style>
+  body { background: #141418; color: #eee; font: 14px/1.5 'Segoe UI', sans-serif; margin: 0; padding: 24px; }
+  h1 { font-size: 20px; margin: 0 0 4px; }
+  h2 { font-size: 15px; margin: 28px 0 8px; color: #c5a4f5; }
+  .sub { color: #888; font-size: 12px; margin-bottom: 18px; }
+  .row { display: flex; gap: 18px; flex-wrap: wrap; align-items: flex-start; }
+  .card { background: #1d1d24; border: 1px solid #2c2c34; border-radius: 12px; padding: 14px; flex: 1 1 460px; }
+  .card h3 { margin: 0 0 8px; font-size: 13px; color: #bbb; }
+  .card img { width: 100%; border-radius: 8px; background: #101014; display: block; }
+  .tag { display: inline-block; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 700; margin-right: 6px; }
+  .ok { background: #14351f; color: #7be39a; }
+  .note { background: #221f2a; border: 1px solid #3a3348; color: #b9b3c6; border-radius: 10px; padding: 12px 14px; font-size: 13px; margin: 14px 0; }
+  table { border-collapse: collapse; margin: 10px 0 4px; }
+  td, th { border: 1px solid #2c2c34; padding: 6px 12px; font-size: 12.5px; text-align: left; }
+  th { background: #22222b; color: #aaa; font-weight: 600; }
+  .swatch { display: inline-block; width: 13px; height: 13px; border-radius: 4px; vertical-align: -2px; margin-right: 6px; border: 1px solid #444; }
+  iframe { border: 1px solid #2c2c34; border-radius: 12px; background:
+    radial-gradient(60% 60% at 20% 30%, #f7b2c9 0%, transparent 60%),
+    radial-gradient(55% 60% at 80% 15%, #a7c1ff 0%, transparent 60%),
+    radial-gradient(55% 50% at 65% 75%, #b5ec6a33 0%, transparent 60%),
+    #e8e3f6; width: 100%; height: 260px; border: 0; }
+</style>
+</head>
+<body>
+<h1>Intip asli vs Intip-Rebuild</h1>
+<div class="sub">Bukti = screenshot layar: asli dari PrintWindow Intip.exe yang sedang jalan; rebuild dari jendela Electron hasil rebuild. Angka = hasil pengukuran pixel.</div>
+
+<h2>1 Â· Notch keadaan diam (idle)</h2>
+<div class="row">
+  <div class="card"><h2><span class="ok">ASLI</span> Intip 0.2.0-beta.2</h2>
+    <img src="intip_idle.png" width="520" alt="Intip asli idle">
+    <div class="note">Ukur: lebar <b>380px</b> (state open saat screenshot) â€” tema <b>kaca</b> aktif: badan biru-abu <span class="swatch" style="background:#3b4161"></span><code>#3b4161</code>, kaca putih <span class="swatch" style="background:#f5f5f7"></span></div>
+  </div>
+  <div class="card"><h2>REBUILD</h2>
+    <img src="rebuild_idle.png" width="520" alt="">
+    <div class="note">Ukur: notch idle <b>150Ã—36px</b> di top-center + telinga 19px â€” sama dengan <code>--w:150 --h:36</code> dari CSS asli.</div>
+  </div>
+</div>
+
+<h2>2 Â· Notch terbuka (open, 380Ã—160)</h2>
+<div class="row">
+  <div class="card"><h2><span class="ok">ASLI</span> â€” open</h2>
+    <img src="intip_open.png" width="620" alt="">
+    <div class="note">400px lebar terukur (380 + 2Ã—teliga), tinggi 159px â‰ˆ <code>--h:160</code>. Isi: header sapaan + slide widget + dots.</div>
+  </div>
+  <div class="card"><h2>REBUILD â€” open</h2>
+    <img src="rebuild_open.png" width="660" alt="">
+    <div class="note">Terbuka setelah klik: terukur <b>409x160px</b> - <b>persis sama</b> dengan asli (409x160). Body <span class="swatch" style="background:#3b4161"></span> <code>#3b4161</code> â€” <b>sama dengan asli</b>. Nuansa biru pada asli berasal dari desktop di balik kaca; pada jendela transparan rebuild PrintWindow tidak menangkap desktop di belakangnya, jadi tampil abu-abu - CSS identik: rgba(38,30,46,.34) + blur(26px).</div>
+  </div>
+</div>
+
+<h2>2b · Dock bawah (Start | timer | status)</h2>
+<div class="row">
+  <div class="card"><h2>REBUILD — dock bawah (terukur dari jendela rebuild)</h2>
+    <img src="rebuild_dock.png" width="660" alt="">
+    <div class="note">Struktur dari dock.js asli: Start • timer • pemisah • status (Wi-Fi, volume, baterai, cuaca, jam). Radius 24px, glass bg, blur 24px — spesifikasi sama dengan asli.</div>
+  </div>
+</div>
+
+<h2>3 Â· Identitas warna (dari CSS asli di app.asar)</h2>
+<div class="note">
+  <table>
+    <tr><th>Variabel</th><th>Asli</th><th>Dipakai untuk</th></tr>
+    <tr><td><code>--peach</code></td><td><span class="swatch" style="background:#ffd5c4"></span> #ffd5c4</td><td>kulit karakter</td></tr>
+    <tr><td><code>--grape</code></td><td><span class="swatch" style="background:#8a5cff"></span> #8a5cff</td><td>aksen hoodie</td></tr>
+    <tr><td><code>--sky</code></td><td><span class="swatch" style="background:#74c7ff"></span> #74c7ff</td><td>slide sholat</td></tr>
+    <tr><td><code>--sun</code></td><td><span class="swatch" style="background:#ffce4a"></span> #ffce4a</td><td>matahari (mood pagi)</td></tr>
+    <tr><td><code>--lime</code></td><td><span class="swatch" style="background:#b5ec6a"></span> #b5ec6a</td><td>slide minum</td></tr>
+    <tr><td><code>--pink</code></td><td><span class="swatch" style="background:#ff8fc1"></span> #ff8fc1</td><td>equalizer musik</td></tr>
+    <tr><td>tema kaca</td><td>rgba(38,30,46,.34) + blur(26px)</td><td>isi notch</td></tr>
+  </table>
+</div>
+
+<h2>4 Â· Demo interaktif rebuild (klik notch di bawah)</h2>
+<iframe src="demo.html" height="200"></iframe>
+
+</body>
+</html>
+

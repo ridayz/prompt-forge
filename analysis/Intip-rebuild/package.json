@@ -1,0 +1,43 @@
+{
+  "name": "intip-rebuild",
+  "version": "1.0.0",
+  "description": "Desktop widget overlay - Intip rebuild (simplified clone)",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "electron .",
+    "start": "electron . --hidden",
+    "build": "electron-builder --win portable",
+    "build-installer": "electron-builder --win nsis"
+  },
+  "build": {
+    "appId": "com.intip.rebuild",
+    "productName": "Intip-Rebuild",
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "artifactName": "Intip-Rebuild-Setup-${version}.${ext}"
+    }
+  },
+  "dependencies": {
+    "electron-store": "^8.1.0"
+  },
+  "devDependencies": {
+    "electron": "^28.3.3",
+    "electron-builder": "^24.13.3"
+  },
+  "allowScripts": {
+    "electron@28.3.3": true
+  }
+}

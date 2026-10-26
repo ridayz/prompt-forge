@@ -1,0 +1,404 @@
+/* ============================================================
+   Intip-Rebuild — matched to REAL Intip UI (extracted from
+   the original app.asar + live-screen pixel measurements).
+
+   Original spec (Intip 0.2.0-beta.2):
+   - Notch pill: idle 150x36 r18 -> open 380x160, tucked 72x6
+   - Ears: ::before/::after 19x18px, mask radial 18px radius
+   - Spring: cubic-bezier(.3, 1.32, .45, 1)
+   - "kaca" theme (default on live): translucent blue-grey
+     fill over white frosted glass, white text
+   - Accents: grape #8a5cff, pink #ff8fc1, peach #ffd5c4,
+     sky #74c7ff, sun #ffce4a, lime #b5ec6a
+   - Font: Figtree, system-ui fallback
+   ============================================================ */
+
+:root {
+  --ink: #000;
+  --text: #fff;
+  --muted: rgba(255, 255, 255, .8);
+  --faint: rgba(255, 255, 255, .55);
+  --peach: #ffd5c4;
+  --grape: #8a5cff;
+  --sky: #74c7ff;
+  --sun: #ffce4a;
+  --lime: #b5ec6a;
+  --pink: #ff8fc1;
+  --spring: cubic-bezier(.3, 1.32, .45, 1);
+  --pop: cubic-bezier(.3, 1.7, .5, 1);
+
+  /* notch geometry */
+  --w: 150px; --h: 36px; --r: 18px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  margin: 0;
+  min-height: 100vh;
+  overflow: hidden;
+  background: transparent;
+  font-family: Figtree, 'Segoe UI', system-ui, sans-serif;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+}
+
+html:not(.kbd) :focus { outline: none !important; }
+button { cursor: pointer; font: inherit; color: inherit; }
+
+/* ---------- Notch (top-center pill attached to top edge) ---------- */
+.notch-wrap {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+/* The host window is only 460x180 at top-center of the screen; center the
+   notch inside it. */
+html, body { display: block; }
+
+.notch {
+  position: relative;
+  width: var(--w);
+  height: var(--h);
+  background: var(--bg);
+  border-radius: 0 0 var(--r) var(--r);
+  color: var(--text);
+  outline: none;
+  transform-origin: 50% 0;
+  transition:
+    width .62s var(--spring),
+    height .62s var(--spring),
+    border-radius .62s var(--spring),
+    transform .3s var(--spring);
+}
+
+/* ears: curved shoulders connecting the notch to the top screen edge */
+.notch::before,
+.notch::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  width: 19px;
+  height: 18px;
+  background: var(--ear);
+}
+.notch::before {
+  left: -18px;
+  -webkit-mask: radial-gradient(circle at 0 100%, transparent 17.75px, #000 18.25px);
+  mask: radial-gradient(circle at 0 100%, transparent 17.75px, #000 18.25px);
+}
+.notch::after {
+  right: -18px;
+  -webkit-mask: radial-gradient(circle at 100% 100%, transparent 17.75px, #000 18.25px);
+  mask: radial-gradient(circle at 100% 100%, transparent 17.75px, #000 18.25px);
+}
+
+/* ---------- Theme: kaca (glass, live default) ----------
+   Measured on live screen: body ~ #3b4160..#484e6c translucent
+   blue-grey over white frosted glass (#f5f5f7 highlight). */
+.notch.themed {
+  --bg: linear-gradient(180deg, rgba(255, 255, 255, .24), rgba(255, 255, 255, .1)), rgba(38, 30, 46, .34);
+  --ear: linear-gradient(180deg, rgba(255, 255, 255, .24), rgba(255, 255, 255, .1)) 0 0 / 100% var(--h), rgba(38, 30, 46, .34);
+  --card-2: rgba(0, 0, 0, .16);
+  --surface-hi: rgba(0, 0, 0, .26);
+  --track-c: rgba(255, 255, 255, .22);
+  --sw-off: rgba(0, 0, 0, .25);
+  --dot: rgba(255, 255, 255, .42);
+  --dot-on: #fff;
+  --line: #fff;
+  --vara: #fff;
+  backdrop-filter: blur(26px) saturate(1.6);
+  box-shadow:
+    inset 0 -1px 0 rgba(255, 255, 255, .38),
+    inset 1px 0 0 rgba(255, 255, 255, .16),
+    inset -1px 0 0 rgba(255, 255, 255, .16),
+    0 12px 34px -14px rgba(40, 20, 60, .45);
+}
+.notch.themed::before,
+.notch.themed::after { backdrop-filter: blur(26px) saturate(1.6); }
+
+/* Theme: gelap (ink) — the pure black pill from style.css defaults */
+.notch[data-theme="gelap"] {
+  --bg: var(--ink);
+  --ear: var(--ink);
+  --card-2: #1f1f1f;
+  --surface-hi: #2c2c2c;
+  --track-c: #262626;
+  --dot: rgba(255, 255, 255, .22);
+  --dot-on: #fff;
+}
+
+/* ---------- Layers (idle / open slides) ---------- */
+.layer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--lw);
+  height: 100%;
+  margin-left: calc(var(--lw) / -2);
+  opacity: 0;
+  filter: blur(8px);
+  transform: scale(.96);
+  pointer-events: none;
+  transition: opacity .14s ease, filter .14s ease, transform .14s ease;
+}
+.idle-layer { --lw: 150px; }
+.open-layer { --lw: 380px; }
+.greet-layer { --lw: 480px; transform: none; }
+.notif-layer { --lw: 210px; }
+
+.notch[data-state="idle"] .idle-layer,
+.notch[data-state="open"] .open-layer,
+.notch[data-state="greet"] .greet-layer,
+.notch[data-state="notif"] .notif-layer {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  pointer-events: auto;
+  transition-duration: .38s;
+  transition-delay: .16s;
+}
+
+/* ---------- Idle: live info left, head peeks right ---------- */
+.idle-info {
+  position: absolute;
+  left: 15px;
+  top: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+}
+.idle-info .live {
+  display: none;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  animation: liveIn .45s var(--spring) both;
+}
+@keyframes liveIn { from { opacity: 0; transform: translateY(5px) scale(.9); } }
+.idle-info[data-live="clock"] .l-clock { display: inline-flex; }
+
+/* eyes idle style ("mata") */
+.idle-eyes { display: none; position: absolute; left: 50%; top: 50%; width: 40px; height: 20px; margin: -10px 0 0 -20px; }
+.idle-eyes svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.idle-eyes ellipse { fill: #fff; transform-box: fill-box; transform-origin: center; animation: eyesBlink 5.2s infinite; }
+.ie-look { transition: transform .25s ease-out; }
+@keyframes eyesBlink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.12); } }
+.notch[data-idle="mata"] .idle-eyes { display: block; }
+.notch[data-idle="mata"] .idle-info { display: none; }
+.notch[data-idle="mata"][data-state="idle"] { --w: 84px; }
+
+/* ---------- Open: header + slides ---------- */
+.o-head { cursor: grab; display: flex; justify-content: space-between; align-items: center; padding: 12px 18px 0; }
+.o-hello { display: flex; flex-direction: column; gap: 1px; }
+.o-name { font-weight: 700; font-size: 15px; }
+.o-hello #oDate { font-size: 11.5px; color: var(--faint); }
+.o-tools { display: flex; align-items: center; gap: 10px; }
+.o-time { font-size: 15px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.batt { display: inline-flex; align-items: center; gap: 5px; color: var(--muted); font-size: 11.5px; }
+.batt svg { width: 26px; height: 14px; }
+.batt .shell { fill: none; stroke: var(--muted); stroke-width: 1.6; }
+.batt .fill { fill: var(--line); }
+.batt .nub { stroke: var(--muted); stroke-width: 1.6; stroke-linecap: round; }
+
+.o-body { display: flex; align-items: center; height: calc(100% - 40px); padding: 0 8px; }
+.o-body .nav {
+  flex: none;
+  width: 28px; height: 28px;
+  display: grid; place-items: center;
+  border: 0; border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  transition: background .2s, color .2s;
+}
+.o-body .nav:hover { background: var(--surface-hi); color: var(--text); }
+.o-body .nav svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+
+.slides { position: relative; flex: 1; height: 100%; overflow: hidden; }
+.slide {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 4px;
+  opacity: 0;
+  transform: translateX(24px);
+  pointer-events: none;
+  transition: opacity .4s ease, transform .5s var(--spring);
+}
+.slide.on { opacity: 1; transform: none; pointer-events: auto; }
+.slide:not(.on) { transform: translateX(-24px) scale(.86); }
+.slide.on > * { animation: rise .5s var(--spring) both; }
+.slide.on > :nth-child(2) { animation-delay: .06s; }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+
+/* dots */
+.dots { position: absolute; left: 0; right: 0; bottom: 11px; display: flex; justify-content: center; gap: 5px; }
+.dots button {
+  width: 6px; height: 6px;
+  padding: 0; border: 0; border-radius: 99px;
+  background: var(--dot);
+  transition: width .35s var(--spring), background .2s;
+}
+.dots button.on { width: 16px; background: var(--dot-on); }
+
+/* ---------- Widget slides (shared) ---------- */
+.w-ico {
+  flex: none;
+  width: 44px; height: 44px;
+  display: grid; place-items: center;
+  border-radius: 12px;
+  background: var(--card-2);
+}
+.w-ico svg { width: 24px; height: 24px; fill: none; stroke: var(--acc, var(--text)); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.w-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.w-title { font-size: 12px; color: var(--muted); }
+.w-value { font-size: 19px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: .3px; }
+.w-sub { font-size: 11px; color: var(--faint); }
+
+/* slider rail (water/todo/pomo progress) */
+.rail { position: relative; height: 5px; border-radius: 99px; background: var(--track-c); overflow: hidden; }
+.rail i { position: absolute; inset: 0 auto 0 0; width: 0%; border-radius: 99px; background: var(--acc, var(--line)); transition: width .45s var(--spring); }
+
+/* per-widget accent colors — from asar: --c-music #d6337a, --c-timer #6a3df0, --c-alarm #c98500 */
+.s-music  { --acc: #d6337a; }
+.s-pomo   { --acc: #6a3df0; }
+.s-alarm  { --acc: #c98500; }
+.s-sholat { --acc: #74c7ff; }
+.s-water  { --acc: #74cc3f; }
+.s-todo   { --acc: #ff8fc1; }
+.s-notif  { --acc: #8a5cff; }
+
+/* music equalizer bars (idle + slide) */
+.eq { display: inline-flex; align-items: flex-end; gap: 2px; height: 12px; }
+.eq i { width: 3px; height: 100%; border-radius: 2px; background: var(--pink); transform-origin: bottom; animation: eqBounce 1s ease-in-out infinite; }
+.eq i:nth-child(2) { animation-delay: .15s; }
+.eq i:nth-child(3) { animation-delay: .3s; }
+@keyframes eqBounce { 0%, 100% { transform: scaleY(.3); } 50% { transform: scaleY(1); } }
+
+/* ---------- Character head (mascot peek) ---------- */
+.head {
+  position: absolute;
+  left: var(--hx, 42px);
+  top: var(--hy, 7px);
+  width: var(--hs, 26px);
+  height: var(--hs, 26px);
+  opacity: 0;
+  transform: scale(.4);
+  transition: opacity .3s var(--pop), transform .3s var(--pop), left .62s var(--spring);
+}
+.notch[data-state="idle"] .head { opacity: 1; transform: scale(1); }
+.head svg { width: 100%; height: 100%; filter: drop-shadow(0 1px 1.5px rgba(23, 23, 28, .28)); }
+
+/* ---------- Tucked (thin line) ---------- */
+.notch-wrap.tucked .notch[data-state="idle"] { --w: 72px; --h: 6px; --r: 3px; }
+.notch-wrap.tucked .notch[data-state="idle"]::before,
+.notch-wrap.tucked .notch[data-state="idle"]::after { opacity: 0; }
+
+/* ---------- Dock (bottom taskbar replacement) — spec from dock.js/style.css ---------- */
+.dock-wrap {
+  position: fixed;
+  left: 50%;
+  bottom: 10px;
+  transform: translateX(-50%);
+  z-index: 25;
+  transition: opacity .25s, bottom .35s var(--spring);
+}
+.dock-wrap.autohide:not(.show) { opacity: 0; pointer-events: none; translate: 0 120%; }
+
+.dock {
+  --dock-bg: rgba(16, 16, 18, .74);
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  padding: 8px 10px 13px;
+  border-radius: 24px;
+  background: var(--dock-bg);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .12),
+    inset 0 0 0 1px rgba(255, 255, 255, .06),
+    0 18px 40px -16px rgba(0, 0, 0, .55);
+  color: var(--text);
+  user-select: none;
+}
+.dock.themed {
+  --dock-bg: linear-gradient(180deg, rgba(255, 255, 255, .24), rgba(255, 255, 255, .1)), rgba(38, 30, 46, .34);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .34),
+    inset 0 0 0 1px rgba(255, 255, 255, .14),
+    0 18px 40px -16px rgba(40, 20, 60, .45);
+}
+
+.dk-w {
+  position: relative;
+  flex: none;
+  width: 48px; height: 48px;
+  display: grid; place-items: center;
+  padding: 0; border: 0;
+  border-radius: 14px;
+  background: var(--card-2);
+  color: var(--text);
+  transition: transform .3s var(--spring), background .2s;
+}
+button.dk-w:hover { transform: translateY(-3px); }
+button.dk-w:active { transform: scale(.92); }
+.dk-w svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.dk-start svg { fill: currentColor; stroke: none; }
+
+.dk-timer {
+  width: 76px;
+  display: flex; flex-direction: column; align-items: center; gap: 1px;
+  border-radius: 14px;
+}
+.dk-timer b { font-size: 13px; font-variant-numeric: tabular-nums; color: rgb(var(--tc, 116, 199, 255)); }
+.dk-timer span { font-size: 9.5px; color: var(--faint); }
+
+.dk-sep { flex: none; width: 1px; height: 34px; background: rgba(255, 255, 255, .14); margin: 0 3px 8px; }
+.dk-apps { display: flex; align-items: flex-end; gap: 6px; }
+.dk-app {
+  position: relative; flex: none;
+  width: 48px; height: 48px;
+  display: grid; place-items: center;
+  border: 0; padding: 0; border-radius: 14px;
+  background: var(--card-2);
+  transition: transform .3s var(--spring), background .2s;
+}
+.dk-app:hover { transform: translateY(-3px); background: var(--surface-hi); }
+.dk-app svg { width: 26px; height: 26px; }
+.dk-app .dk-dot {
+  position: absolute; bottom: 3px; left: 50%;
+  width: 4px; height: 4px; margin-left: -2px;
+  border-radius: 50%; background: var(--dot-on);
+  opacity: 0; transition: opacity .2s;
+}
+.dk-app.running .dk-dot { opacity: 1; }
+.dk-badge { position: absolute; top: 4px; right: 4px; min-width: 14px; height: 14px; border-radius: 99px; background: var(--pink); font-size: 9px; font-weight: 800; font-style: normal; display: grid; place-items: center; color: #fff; }
+
+.dk-status { display: flex; align-items: center; gap: 2px; padding-bottom: 3px; }
+.dk-st {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 36px; padding: 0 9px;
+  border: 0; border-radius: 10px;
+  background: transparent; color: var(--muted);
+  font-size: 11.5px; font-variant-numeric: tabular-nums;
+  transition: background .2s, color .2s;
+}
+button.dk-st:hover { background: var(--surface-hi); color: var(--text); }
+.dk-st svg { width: 17px; height: 17px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.st-bat svg { width: 22px; height: 13px; }
+.st-bat .shell { fill: none; stroke: currentColor; stroke-width: 1.4; }
+.st-bat .fill { fill: var(--line); }
+.st-bat .nub { stroke: currentColor; stroke-width: 1.4; stroke-linecap: round; }
+.st-bat span { font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.st-wx b { font-size: 12.5px; font-weight: 700; }
+.dk-time { flex-direction: column; gap: 0; align-items: flex-end; line-height: 1.15; }
+.dk-time b { font-size: 13px; font-weight: 800; font-variant-numeric: tabular-nums; }
+.dk-time span { font-size: 9.5px; color: var(--faint); }
